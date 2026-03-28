@@ -1,5 +1,7 @@
+import Auth from "@/layouts/Auth.vue";
 import Main from "@/layouts/Main.vue";
 import Dashboard from "@/views/Dashboard.vue";
+import Login from "@/views/Login.vue";
 import { createRouter, createWebHistory } from "vue-router";
 
 const router = createRouter({
@@ -13,6 +15,24 @@ const router = createRouter({
           path: "/",
           name: "Dashboard",
           component: Dashboard,
+          meta: {
+            requiresAuth: true,
+            permission: "dashboard-menu",
+          },
+        },
+      ],
+    },
+    {
+      path: "/login",
+      component: Auth,
+      children: [
+        {
+          path: "",
+          name: "Login",
+          component: Login,
+          meta: {
+            requiresUnauth: true,
+          },
         },
       ],
     },
