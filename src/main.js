@@ -13,4 +13,3 @@ app.use(router);
 
 app.mount("#app");
 
-// LANJUTKAN PADA MENIT 15:13

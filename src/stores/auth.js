@@ -17,12 +17,14 @@ export const useAuthStore = defineStore("auth", {
   actions: {
     async login(credentials) {
       this.loading = true;
+      this.error = null;
       try {
         const response = await axiosInstance.post("/login", credentials);
         const token = response.data.token;
-        Cookies.set("token", token);
+        Cookies.set("token", token, { expires: 7 });
+        console.log("Token tersimpan:", Cookies.get("token")); // cek token
         this.success = "Login successful";
-        router.push({ name: "dashboard" });
+        await router.push({ name: "Dashboard" });
       } catch (error) {
         this.error = handleError(error);
       } finally {
@@ -31,11 +33,22 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async logout() {
-      Cookies.remove("token");
-      router.push({ name: "login" });
-      this.user = null;
-      this.error = null;
-      this.success = "Logout successful";
+      this.loading = true;
+      try {
+        await axiosInstance.post("/logout");
+
+        Cookies.remove("token");
+
+        router.push({ name: "Login" });
+        this.user = null;
+        this.error = null;
+
+        this.success = "Logout successful";
+      } catch (error) {
+        this.error = handleError(error);
+      } finally {
+        this.loading = false;
+      }
     },
 
     async checkAuth() {
@@ -48,8 +61,9 @@ export const useAuthStore = defineStore("auth", {
         if (error.response && error.response.status === 401) {
           this.logout();
         }
+      } finally {
+        this.loading = false;
       }
-      this.loading = false;
     },
   },
 });

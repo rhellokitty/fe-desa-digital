@@ -3,6 +3,7 @@ import Main from "@/layouts/Main.vue";
 import { useAuthStore } from "@/stores/auth";
 import Dashboard from "@/views/Dashboard.vue";
 import Login from "@/views/Login.vue";
+import Cookies from "js-cookie";
 import { createRouter, createWebHistory } from "vue-router";
 
 const router = createRouter({
@@ -40,8 +41,9 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to) => {
   const authStore = useAuthStore();
+  const token = Cookies.get("token");
 
   if (to.meta.requiresAuth) {
     if (authStore.token) {
@@ -50,28 +52,29 @@ router.beforeEach(async (to, from, next) => {
           await authStore.checkAuth();
         }
 
-        const userPermissions = authStore.user?.permissions || [];
+        if (!authStore.user) {
+          return { name: "Login" };
+        }
 
+        const userPermissions = authStore.user?.permissions || [];
         if (
           to.meta.permission &&
           !userPermissions.includes(to.meta.permission)
         ) {
-          next({ name: "Error 403" });
-          return;
+          return { name: "Error 403" };
         }
-
-        next();
+        return true;
       } catch (error) {
-        next({ name: "Login" });
+        return { name: "Login" };
       }
     } else {
-      next({ name: "Login" });
+      return { name: "Login" };
     }
-  } else if (to.meta.requiresUnauth && authStore.token) {
-    next({ name: "Dashboard" });
-  } else {
-    next();
+  } else if (to.meta.requiresUnauth && token) {
+    return { name: "Dashboard" };
   }
+
+  return true;
 });
 
 export default router;

@@ -15,19 +15,18 @@ const { loading, error } = storeToRefs(authStore);
 const { login } = authStore;
 
 const form = ref({
-    email: null,
-    password: null
+    email: '',
+    password: ''
 })
 
 const handleSubmit = async () => {
     await login(form.value)
 
-    if (error.value === 'Unauthorized') {
+    if (authStore.error) {
         form.value.password = null
         alert('Email atau password salah')
     }
-
-}
+};
 
 </script>
 
