@@ -8,6 +8,7 @@ import IconProfileBlack from '@/assets/images/icons/user-black.svg';
 import IconKeySecondary from '@/assets/images/icons/key-secondary-green.svg';
 import IconKeyBlack from '@/assets/images/icons/key-black.svg';
 import Input from '@/components/ui/Input.vue';
+import Button from '@/components/ui/Button.vue';
 
 const authStore = useAuthStore();
 const { loading, error } = storeToRefs(authStore);
@@ -83,10 +84,12 @@ const handleSubmit = async () => {
                 <div id="Password" class="flex flex-col gap-4">
                     <h2 class="font-medium leading-5 text-desa-secondary">Password</h2>
 
+                    <Input v-model="form.password" type="password" placeholder="Ketik Password Kamu"
+                        :error-message="error?.password" :icon="IconKeySecondary" :filled-icon="IconKeyBlack" />
                 </div>
             </section>
-            <button type="submit"
-                class="py-[18px] flex justify-center items-center bg-desa-dark-green rounded-2xl font-medium leading-5 text-white">Masuk</button>
+
+            <Button type="submit" label="Masuk" :loading="loading" />
         </div>
     </form>
     <section id="Banner" class="relative flex w-full max-w-[634px]">

@@ -23,7 +23,7 @@ const isOpen = ref(isChildActive.value)
 
 watch(isChildActive, () => {
     isOpen.value = isChildActive.value
-})
+});
 
 </script>
 
