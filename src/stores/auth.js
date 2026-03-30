@@ -22,7 +22,7 @@ export const useAuthStore = defineStore("auth", {
         const response = await axiosInstance.post("/login", credentials);
         const token = response.data.token;
         Cookies.set("token", token, { expires: 7 });
-        console.log("Token tersimpan:", Cookies.get("token")); // cek token
+        console.log("Token tersimpan:", Cookies.get("token"));
         this.success = "Login successful";
         await router.push({ name: "Dashboard" });
       } catch (error) {
