@@ -3,6 +3,7 @@ import Main from "@/layouts/Main.vue";
 import { useAuthStore } from "@/stores/auth";
 import Dashboard from "@/views/Dashboard.vue";
 import HeadOfFamilies from "@/views/head-of-family/HeadOfFamilies.vue";
+import HeadOfFamily from "@/views/head-of-family/HeadOfFamily.vue";
 import Login from "@/views/Login.vue";
 import Cookies from "js-cookie";
 import { createRouter, createWebHistory } from "vue-router";
@@ -32,6 +33,15 @@ const router = createRouter({
             permission: "head-of-family-list",
           },
         },
+        {
+          path: 'head-of-family/:id',
+          name: 'manage-head-of-family',
+          component: HeadOfFamily,
+          meta: {
+            requiresAuth: true,
+            permission: 'head-of-family-list'
+          }
+        }
       ],
     },
     {
