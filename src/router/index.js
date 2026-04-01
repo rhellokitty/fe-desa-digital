@@ -6,6 +6,7 @@ import HeadOfFamilies from "@/views/head-of-family/HeadOfFamilies.vue";
 import HeadOfFamily from "@/views/head-of-family/HeadOfFamily.vue";
 import HeadOfFamilyCreate from "@/views/head-of-family/HeadOfFamilyCreate.vue";
 import Login from "@/views/Login.vue";
+import SocialAssistances from "@/views/social-assistance/SocialAssistances.vue";
 import Cookies from "js-cookie";
 import { createRouter, createWebHistory } from "vue-router";
 
@@ -50,6 +51,15 @@ const router = createRouter({
           meta: {
             requiresAuth: true,
             permission: "head-of-family-create"
+          }
+        },
+        {
+          path: "social-assistance",
+          name: "social-assistance",
+          component: SocialAssistances,
+          meta: {
+            requiresAuth: true,
+            permission: "social-assistance-list"
           }
         }
       ],
