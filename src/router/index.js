@@ -4,6 +4,7 @@ import { useAuthStore } from "@/stores/auth";
 import Dashboard from "@/views/Dashboard.vue";
 import HeadOfFamilies from "@/views/head-of-family/HeadOfFamilies.vue";
 import HeadOfFamily from "@/views/head-of-family/HeadOfFamily.vue";
+import HeadOfFamilyCreate from "@/views/head-of-family/HeadOfFamilyCreate.vue";
 import Login from "@/views/Login.vue";
 import Cookies from "js-cookie";
 import { createRouter, createWebHistory } from "vue-router";
@@ -34,12 +35,21 @@ const router = createRouter({
           },
         },
         {
-          path: 'head-of-family/:id',
-          name: 'manage-head-of-family',
+          path: "head-of-family/:id",
+          name: "manage-head-of-family",
           component: HeadOfFamily,
           meta: {
             requiresAuth: true,
-            permission: 'head-of-family-list'
+            permission: "head-of-family-list"
+          }
+        },
+        {
+          path: "head-of-family/create",
+          name: "create-head-of-family",
+          component: HeadOfFamilyCreate,
+          meta: {
+            requiresAuth: true,
+            permission: "head-of-family-create"
           }
         }
       ],

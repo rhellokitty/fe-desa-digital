@@ -45,7 +45,7 @@ const { logout } = authStore;
                     <p class="font-semibold leading-5 w-[120px] truncate">{{ user.name }}</p>
                     <p class="font-medium text-sm text-desa-secondary">{{ user.role }}</p>
                 </div>
-                <a @click="logout" class="flex size-6 shrink-0">
+                <a @click="logout" class="flex size-6 shrink-0" style="cursor: pointer;">
                     <img src="@/assets/images/icons/logout-red.svg" class="size-6" alt="logout">
                 </a>
             </div>
