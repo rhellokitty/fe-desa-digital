@@ -50,8 +50,8 @@ watch(isChildActive, () => {
     <template v-if="item.children">
         <div class="accordion group/accordion flex flex-col gap-1 w-full">
             <button :data-expand="`accordion-${item.label}`"
-                class="group flex w-full shrink-0 items-center h-14 gap-2 rounded-2xl p-4 active"
-                @click="isOpen = !isOpen">
+                class="group flex w-full shrink-0 items-center h-14 gap-2 rounded-2xl p-4"
+                :class="{ active: isOpen || isChildActive }" @click="isOpen = !isOpen">
                 <div class="relative flex size-6 shrink-0">
                     <img :src="item.iconActive"
                         class="absolute flex size-6 shrink-0 opacity-0 group-[.active]:opacity-100 transition-setup"

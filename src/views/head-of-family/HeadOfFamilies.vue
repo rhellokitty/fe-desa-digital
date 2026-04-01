@@ -26,7 +26,10 @@ const fetchData = async () => {
 
 const debounceFetchData = debounce(fetchData, 500);
 
-onMounted(fetchData);
+onMounted(() => {
+    headOfFamilyStore.$patch({ error: null });
+    fetchData();
+});
 
 watch(serverOptions, () => {
     fetchData();

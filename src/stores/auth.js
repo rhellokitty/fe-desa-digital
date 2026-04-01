@@ -52,6 +52,10 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async checkAuth() {
+      if (!Cookies.get("token")) {
+        this.user = null;
+        return null;
+      }
       this.loading = true;
       try {
         const response = await axiosInstance.get("/me");
@@ -59,7 +63,9 @@ export const useAuthStore = defineStore("auth", {
         return this.user;
       } catch (error) {
         if (error.response && error.response.status === 401) {
-          this.logout();
+          Cookies.remove("token");
+          this.user = null;
+          router.push({ name: "Login" });
         }
       } finally {
         this.loading = false;

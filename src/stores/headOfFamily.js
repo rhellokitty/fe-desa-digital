@@ -63,6 +63,9 @@ export const useHeadOfFamilyStore = defineStore("head-of-family", {
 
     async createHeadOfFamily(payload) {
       this.loading = true
+      this.error = null
+      this.success = null
+
       try {
         const response = await axiosInstance.post(`head-of-family`, payload)
         this.success = response.data.message
