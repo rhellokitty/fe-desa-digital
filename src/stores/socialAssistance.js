@@ -33,5 +33,34 @@ export const useSocialAssistanceStores = defineStore("social-assistance", {
                 this.loading = false;
             }
         },
+
+        async fetchSocialAssistance(id) {
+            this.loading = true;
+
+            try {
+                const response = await axiosInstance.get(`social-assistance/${id}`)
+
+                return response.data.data
+            } catch (error) {
+                this.error = handleError(error)
+            } finally {
+                this.loading = false
+            }
+        },
+
+        async deleteSocialAssistance(id) {
+            this.loading = true
+
+            try {
+                const response = await axiosInstance.delete(`social-assistance/${id}`)
+
+                this.success = response.data.message
+            } catch (error) {
+                this.error = handleError(error)
+            } finally {
+                this.loading = false
+            }
+
+        }
     }
 })

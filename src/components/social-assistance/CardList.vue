@@ -23,10 +23,10 @@ defineProps({
                     <span class="font-medium text-sm text-desa-secondary">{{ item.provider }}</span>
                 </p>
             </div>
-            <a href="kd-bantuan-sosial-manage.html"
+            <RouterLink :to="{ name: 'manage-social-assistance', params: { id: item.id } }"
                 class="flex items-center shrink-0 gap-[10px] rounded-2xl py-4 px-6 bg-desa-black">
                 <span class="font-medium text-white">Manage</span>
-            </a>
+            </RouterLink>
         </div>
         <hr class="border-desa-background">
         <div class="grid grid-cols-3 gap-3">
@@ -36,7 +36,8 @@ defineProps({
                     <img src="@/assets/images/icons/money-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
                 </div>
                 <div class="flex flex-col gap-1">
-                    <p class="font-semibold text-lg leading-5 text-desa-dark-green">Rp {{ formatRupiah(item.amount) }}</p>
+                    <p class="font-semibold text-lg leading-5 text-desa-dark-green">Rp {{ formatRupiah(item.amount) }}
+                    </p>
                     <p class="font-medium text-sm text-desa-secondary">Uang Tunai</p>
                 </div>
             </div>

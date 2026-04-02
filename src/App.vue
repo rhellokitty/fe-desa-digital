@@ -3,7 +3,5 @@
 </script>
 
 <template>
-
   <RouterView />
 </template>
-

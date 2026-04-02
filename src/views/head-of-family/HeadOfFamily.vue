@@ -4,15 +4,14 @@ import ModalDelete from '@/components/ui/ModalDelete.vue';
 import { useHeadOfFamilyStore } from '@/stores/headOfFamily';
 import { storeToRefs } from 'pinia';
 import { onMounted, ref } from 'vue';
-
-const headOfFamilyStore = useHeadOfFamilyStore();
-const { loading } = storeToRefs(headOfFamilyStore)
-const { fetchHeadOfFamily, deleteHeadOfFamily } = headOfFamilyStore
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute()
 const router = useRouter()
 
-import { useRoute, useRouter } from 'vue-router';
+const headOfFamilyStore = useHeadOfFamilyStore();
+const { loading } = storeToRefs(headOfFamilyStore)
+const { fetchHeadOfFamily, deleteHeadOfFamily } = headOfFamilyStore
 
 const headOfFamily = ref({});
 
@@ -20,7 +19,6 @@ const fetchData = async () => {
     const response = await fetchHeadOfFamily(route.params.id)
     headOfFamily.value = response
 }
-
 
 const showModalDelete = ref(false);
 
@@ -546,5 +544,3 @@ onMounted(fetchData);
         @close="showModalDelete = false" @confirm="handleDelete" />
 
 </template>
-
-<!-- LANJUTKAN PADA MENIT 4:34 -->
