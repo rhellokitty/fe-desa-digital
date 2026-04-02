@@ -36,7 +36,7 @@ defineProps({
                     <img src="@/assets/images/icons/money-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
                 </div>
                 <div class="flex flex-col gap-1">
-                    <p class="font-semibold text-lg leading-5 text-desa-dark-green">{{ formatRupiah(item.amount) }}</p>
+                    <p class="font-semibold text-lg leading-5 text-desa-dark-green">Rp {{ formatRupiah(item.amount) }}</p>
                     <p class="font-medium text-sm text-desa-secondary">Uang Tunai</p>
                 </div>
             </div>

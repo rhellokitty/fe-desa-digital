@@ -93,9 +93,5 @@ watch(filters, () => {
             v-if="!loading" />
 
         <Pagination :meta="meta" :server-options="serverOptions" />
-
     </section>
 </template>
-
-
-<!-- LANJUTKAN PADA MENIT 03:00 -->

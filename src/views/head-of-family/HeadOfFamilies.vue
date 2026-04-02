@@ -81,7 +81,7 @@ watch(filters, () => {
                         class="appearance-none outline-none w-full h-14 rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 pl-12 pr-6 gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300">
                     <div class="absolute transform -translate-y-1/2 top-1/2 left-4 flex size-6 shrink-0">
                         <img src="@/assets/images/icons/user-search-secondary-green.svg"
-                            class="size-6 hidden group-has-[:placeholder-shown]:flex" alt="icon">
+                            class="size-6 hkidden group-has-[:placeholder-shown]:flex" alt="icon">
                         <img src="@/assets/images/icons/user-search-black.svg"
                             class="size-6 flex group-has-[:placeholder-shown]:hidden" alt="icon">
                     </div>
