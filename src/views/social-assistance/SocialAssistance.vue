@@ -5,6 +5,7 @@ import { useSocialAssistanceStores } from '@/stores/socialAssistance';
 import { storeToRefs } from 'pinia';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { formatToClientTimeZone } from '@/helpers/format';
 
 const route = useRoute()
 const router = useRouter()
@@ -30,8 +31,6 @@ async function handleDelete() {
 onMounted(fetchData);
 </script>
 
-<!-- LANJUTKAN PADA MENIT 05:00 -->
-
 <template>
     <div id="Header" class="flex items-center justify-between">
         <div class="flex flex-col gap-2">
@@ -49,11 +48,11 @@ onMounted(fetchData);
                 <p class="font-medium text-white">Hapus Data</p>
                 <img src="@/assets/images/icons/trash-white.svg" class="flex size-6 shrink-0" alt="icon">
             </button>
-            <a href="kd-bantuan-sosial-edit.html"
+            <RouterLink :to="{ name: 'edit-social-assistance', params: { id: socialAssistance.id } }"
                 class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-black">
                 <p class="font-medium text-white">Ubah Data</p>
                 <img src="@/assets/images/icons/edit-white.svg" class="flex size-6 shrink-0" alt="icon">
-            </a>
+            </RouterLink>
         </div>
     </div>
     <div class="flex gap-[14px]">
@@ -117,51 +116,31 @@ onMounted(fetchData);
             class="flex flex-col flex-1 h-fit shrink-0 rounded-3xl p-6 gap-6 bg-white">
             <p class="font-medium leading-5 text-desa-secondary">Penerima Bansos Terakhir</p>
             <div id="List-Bansos-Terkahir" class="flex flex-col gap-6">
-                <div class="card flex flex-col rounded-2xl border border-desa-background p-4 gap-4">
+                <div class="card flex flex-col rounded-2xl border border-desa-background p-4 gap-4"
+                    v-for="recipient in socialAssistance.social_assistance_recipients">
                     <div class="flex items-center justify-between">
-                        <p class="font-medium text-sm text-desa-secondary">Tue, 31 Dec 2024 </p>
+                        <p class="font-medium text-sm text-desa-secondary">
+                            {{ formatToClientTimeZone(recipient.created_at) }}
+                        </p>
                         <img src="@/assets/images/icons/calendar-2-secondary-green.svg"
                             class="flex size-[18px] shrink-0" alt="icon">
                     </div>
                     <hr class="border-desa-background">
                     <div class="flex items-center gap-3">
                         <div class="flex flex-col gap-[6px] w-full">
-                            <p class="font-semibold text-lg leading-5">Rp120.000.000</p>
+                            <p class="font-semibold text-lg leading-5">Rp {{ formatRupiah(recipient.amount) }}</p>
                             <p class="font-medium text-sm text-desa-secondary">Nominal Pengajuan</p>
                         </div>
-                        <div class="badge rounded-full p-3 gap-2 flex w-[100px] justify-center shrink-0 bg-desa-yellow">
-                            <span class="font-semibold text-xs text-white uppercase">Menunggu</span>
+                        <div class="badge rounded-full p-3 gap-2 flex w-[100px] justify-center shrink-0 bg-desa-yellow"
+                            v-if="recipient.status === 'pending'">
+                            <span class="font-semibold text-xs text-white uppercase">Pending</span>
                         </div>
-                    </div>
-                    <hr class="border-desa-background">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-0.5">
-                            <img src="@/assets/images/icons/profile-secondary-green.svg"
-                                class="flex size-[18px] shrink-0" alt="icon">
-                            <p class="font-medium text-sm text-desa-secondary">Diberikan Kepada:</p>
+                        <div class="badge rounded-full p-3 gap-2 flex w-[100px] justify-center shrink-0 bg-desa-green"
+                            v-if="recipient.status === 'approved'">
+                            <span class="font-semibold text-xs text-white uppercase">Diterima</span>
                         </div>
-                        <div class="flex items-center gap-1">
-                            <p class="font-medium leading-5">Udin Louvre</p>
-                            <div class="flex size-8 shrink-0 rounded-full bg-desa-foreshadow overflow-hidden">
-                                <img src="@/assets/images/photos/kk-photo-5.png" class="w-full h-full object-cover"
-                                    alt="photo">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card flex flex-col rounded-2xl border border-desa-background p-4 gap-4">
-                    <div class="flex items-center justify-between">
-                        <p class="font-medium text-sm text-desa-secondary">Tue, 31 Dec 2024 </p>
-                        <img src="@/assets/images/icons/calendar-2-secondary-green.svg"
-                            class="flex size-[18px] shrink-0" alt="icon">
-                    </div>
-                    <hr class="border-desa-background">
-                    <div class="flex items-center gap-3">
-                        <div class="flex flex-col gap-[6px] w-full">
-                            <p class="font-semibold text-lg leading-5">Rp120.000.000</p>
-                            <p class="font-medium text-sm text-desa-secondary">Nominal Pengajuan</p>
-                        </div>
-                        <div class="badge rounded-full p-3 gap-2 flex w-[100px] justify-center shrink-0 bg-desa-red">
+                        <div class="badge rounded-full p-3 gap-2 flex w-[100px] justify-center shrink-0 bg-desa-red"
+                            v-if="recipient.status === 'rejected'">
                             <span class="font-semibold text-xs text-white uppercase">Ditolak</span>
                         </div>
                     </div>
@@ -173,40 +152,7 @@ onMounted(fetchData);
                             <p class="font-medium text-sm text-desa-secondary">Diberikan Kepada:</p>
                         </div>
                         <div class="flex items-center gap-1">
-                            <p class="font-medium leading-5">Udin Louvre</p>
-                            <div class="flex size-8 shrink-0 rounded-full bg-desa-foreshadow overflow-hidden">
-                                <img src="@/assets/images/photos/kk-photo-5.png" class="w-full h-full object-cover"
-                                    alt="photo">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card flex flex-col rounded-2xl border border-desa-background p-4 gap-4">
-                    <div class="flex items-center justify-between">
-                        <p class="font-medium text-sm text-desa-secondary">Tue, 31 Dec 2024 </p>
-                        <img src="@/assets/images/icons/calendar-2-secondary-green.svg"
-                            class="flex size-[18px] shrink-0" alt="icon">
-                    </div>
-                    <hr class="border-desa-background">
-                    <div class="flex items-center gap-3">
-                        <div class="flex flex-col gap-[6px] w-full">
-                            <p class="font-semibold text-lg leading-5">Rp120.000.000</p>
-                            <p class="font-medium text-sm text-desa-secondary">Nominal Pengajuan</p>
-                        </div>
-                        <div
-                            class="badge rounded-full p-3 gap-2 flex w-[100px] justify-center shrink-0 bg-desa-dark-green">
-                            <span class="font-semibold text-xs text-white uppercase">Diterima</span>
-                        </div>
-                    </div>
-                    <hr class="border-desa-background">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-0.5">
-                            <img src="@/assets/images/icons/profile-secondary-green.svg"
-                                class="flex size-[18px] shrink-0" alt="icon">
-                            <p class="font-medium text-sm text-desa-secondary">Diberikan Kepada:</p>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <p class="font-medium leading-5">Udin Louvre</p>
+                            <p class="font-medium leading-5">{{ recipient.head_of_family_id.user?.name }}</p>
                             <div class="flex size-8 shrink-0 rounded-full bg-desa-foreshadow overflow-hidden">
                                 <img src="@/assets/images/photos/kk-photo-5.png" class="w-full h-full object-cover"
                                     alt="photo">

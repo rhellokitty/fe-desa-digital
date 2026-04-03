@@ -29,7 +29,7 @@ export function formatDateTime(date) {
   return new Date(date).toLocaleDateString("id-ID", options);
 }
 
-export function formatToClientTimeZome(date) {
+export function formatToClientTimeZone(date) {
   const originalDate = DateTime.fromISO(date, { zone: "UTC" });
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
