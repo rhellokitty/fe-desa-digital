@@ -7,6 +7,7 @@ import HeadOfFamily from "@/views/head-of-family/HeadOfFamily.vue";
 import HeadOfFamilyCreate from "@/views/head-of-family/HeadOfFamilyCreate.vue";
 import Login from "@/views/Login.vue";
 import SocialAssistance from "@/views/social-assistance/SocialAssistance.vue";
+import SocialAssistanceCreate from "@/views/social-assistance/SocialAssistanceCreate.vue";
 import SocialAssistanceEdit from "@/views/social-assistance/socialAssistanceEdit.vue";
 import SocialAssistances from "@/views/social-assistance/SocialAssistances.vue";
 import Cookies from "js-cookie";
@@ -82,6 +83,15 @@ const router = createRouter({
             permission: "social-assistance-edit"
           }
         },
+        {
+          path: "social-assistance/create",
+          name: "create-social-assistance",
+          component: SocialAssistanceCreate,
+          meta: {
+            requiresAuth: true,
+            permission: "social-assistance-create"
+          }
+        }
       ],
     },
     {

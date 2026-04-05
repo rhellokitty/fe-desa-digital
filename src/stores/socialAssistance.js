@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import axiosInstance from "../plugins/axios";
 import { handleError } from "@/helpers/errorHelper";
+import router from "@/router";
 
 export const useSocialAssistanceStores = defineStore("social-assistance", {
     state: () => ({
@@ -35,7 +36,7 @@ export const useSocialAssistanceStores = defineStore("social-assistance", {
         },
 
         async fetchSocialAssistance(id) {
-            this.loading = true;
+            this.loading = true
 
             try {
                 const response = await axiosInstance.get(`social-assistance/${id}`)
@@ -46,6 +47,39 @@ export const useSocialAssistanceStores = defineStore("social-assistance", {
             } finally {
                 this.loading = false
             }
+        },
+
+        async updateSocialAssistance(payload) {
+            this.loading = true;
+
+            try {
+                const response = await axiosInstance.post(`social-assistance/${payload.id}`, {
+                    ...payload,
+                    _method: 'PUT'
+                })
+                this.success = response.data.message
+
+                router.push({ name: 'manage-social-assistance', params: { id: payload.id } })
+            } catch (error) {
+                this.error = handleError(error)
+            } finally {
+                this.loading = false
+            }
+        },
+
+        async createSocialAssistance(payload) {
+            this.loading = true
+
+            try {
+                const response = await axiosInstance.post("social-assistance", payload)
+                this.success = response.data.message
+                router.push({ name: 'social-assistance' })
+            } catch (error) {
+                this.error = handleError(error)
+            } finally {
+                this.loading = false
+            }
+
         },
 
         async deleteSocialAssistance(id) {

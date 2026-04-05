@@ -38,18 +38,10 @@ const profilePictureError = ref('');
 
 const socialAssistanceStore = useSocialAssistanceStores();
 const { loading, error } = storeToRefs(socialAssistanceStore)
-const { fetchSocialAssistance, updateSocialAssistance } = socialAssistanceStore
-
-const fetchData = async () => {
-    const response = await fetchSocialAssistance(route.params.id)
-    socialAssistance.value = response
-
-    socialAssistance.value.thumbnail_url = response.thumbnail
-    socialAssistance.value.thumbnail = null
-}
+const { createSocialAssistance } = socialAssistanceStore
 
 const handleSubmit = async () => {
-    await updateSocialAssistance({
+    await createSocialAssistance({
         ...socialAssistance.value,
         amount: parseRupiah(socialAssistance.value.amount)
     })
@@ -74,10 +66,8 @@ watch(() => socialAssistance.value.amount, (newAmount) => {
     socialAssistance.value.amount = formatRupiah(newAmount);
 });
 
-onMounted(fetchData);
 </script>
 
-<!-- LANJUTKAN PADA MENIT 10:00 -->
 
 <template>
     <div id="Header" class="flex items-center justify-between">
@@ -260,7 +250,7 @@ onMounted(fetchData);
             </section>
             <hr class="border-desa-background w-[calc(100%+48px)] -mx-6" />
             <section id="Buttons" class="flex items-center justify-end gap-4">
-                <RouterLink :to="{ name: 'manage-social-assistance', params: { id: socialAssistance.id } }">
+                <RouterLink :to="{ name: 'social-assistance'}">
                     <div
                         class="py-[18px] rounded-2xl bg-desa-red w-[180px] text-center flex justify-center font-medium text-white">
                         Batal, Tidak jadi</div>
@@ -268,7 +258,7 @@ onMounted(fetchData);
                 <button :disabled="loading" id="submitButton" type="submit"
                     class="py-[18px] rounded-2xl disabled:bg-desa-grey w-[180px] text-center flex justify-center font-medium text-white bg-desa-dark-green transition-all duration-300">
                     <span v-if="!loading">
-                        Update Now
+                        Create Now
                     </span>
                     <span v-else>
                         Loading...
@@ -278,3 +268,5 @@ onMounted(fetchData);
         </div>
     </form>
 </template>
+
+<!-- LANJUTKAN PADA MENIT 4:00 -->
