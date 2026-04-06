@@ -1,6 +1,5 @@
 <script setup>
-import { formatToClientTimeZone } from '@/helpers/format';
-
+import { formatRupiah, formatToClientTimeZone } from '@/helpers/format';
 
 defineProps({
     item: {
@@ -18,30 +17,40 @@ defineProps({
                 <img src="@/assets/images/icons/calendar-2-secondary-green.svg" class="flex size-[18px] shrink-0"
                     alt="icon">
                 <span class="font-medium text-sm text-desa-secondary">{{ formatToClientTimeZone(item.created_at)
-                    }}</span>
+                }}</span>
             </p>
-            <div class="badge rounded-full p-3 gap-2 flex w-[100px] justify-center shrink-0 bg-desa-red">
+            <div class="badge rounded-full p-3 gap-2 flex w-[100px] justify-center shrink-0 bg-desa-yellow"
+                v-if="item.status === 'pending'">
+                <span class="font-semibold text-xs text-white uppercase">Pending</span>
+            </div>
+            <div class="badge rounded-full p-3 gap-2 flex w-[100px] justify-center shrink-0 bg-desa-red"
+                v-if="item.status === 'rejected'">
                 <span class="font-semibold text-xs text-white uppercase">Ditolak</span>
+            </div>
+            <div class="badge rounded-full p-3 gap-2 flex w-[100px] justify-center shrink-0 bg-desa-green"
+                v-if="item.status === 'approved'">
+                <span class="font-semibold text-xs text-white uppercase">Diterima</span>
             </div>
         </div>
         <hr class="border-desa-background">
         <div class="flex items-center w-full">
             <div class="flex w-[100px] h-20 shrink-0 rounded-2xl overflow-hidden bg-desa-foreshadow">
-                <img src="@/assets/images/thumbnails/kk-bansos-1.png" class="w-full h-full object-cover" alt="photo">
+                <img :src="item.social_assistance?.thumbnail" class="w-full h-full object-cover" alt="photo">
             </div>
             <div class="flex flex-col gap-[6px] w-full ml-4 mr-9">
-                <p class="font-semibold text-lg leading-[22.5px] line-clamp-1">Bantuan Untuk Rakyat Kurang Mampu
+                <p class="font-semibold text-lg leading-[22.5px] line-clamp-1">{{ item.social_assistance?.name }}
                 </p>
                 <p class="flex items-center gap-1">
                     <img src="@/assets/images/icons/profile-secondary-green.svg" class="flex size-[18px] shrink-0"
                         alt="icon">
-                    <span class="font-medium text-sm text-desa-secondary">PT Shaynakit Meningkatkan
-                        Bangsa</span>
+                    <span class="font-medium text-sm text-desa-secondary">{{ item.social_assistance.provider }}
+                    </span>
                 </p>
             </div>
             <div class="flex items-center gap-3">
                 <div class="flex flex-col gap-1 text-right">
-                    <p class="font-semibold text-lg leading-5 text-desa-dark-green text-nowrap">Rp120.000.000
+                    <p class="font-semibold text-lg leading-5 text-desa-dark-green text-nowrap">
+                        Rp {{ formatRupiah(item.social_assistance.amount) }}
                     </p>
                     <p class="font-medium text-sm text-desa-secondary">Uang Tunai</p>
                 </div>
@@ -55,14 +64,15 @@ defineProps({
         <div class="flex items-center gap-6 justify-between">
             <div class="flex items-center gap-3 w-[302px] shrink-0">
                 <div class="flex size-[54px] rounded-full bg-desa-foreshadow overflow-hidden">
-                    <img src="@/assets/images/photos/kk-photo-1.png" class="w-full h-full object-cover" alt="icon">
+                    <img :src="item.head_of_family?.profile_picture" class="w-full h-full object-cover" alt="icon">
                 </div>
                 <div class="flex flex-col gap-1">
-                    <p class="font-semibold text-lg leading-5 text-desa-black">Feri Prio Utomo</p>
+                    <p class="font-semibold text-lg leading-5 text-desa-black">{{ item.head_of_family?.user?.name }}</p>
                     <p class="flex items-center gap-1">
                         <img src="@/assets/images/icons/briefcase-secondary-green.svg" class="flex size-[18px] shrink-0"
                             alt="icon">
-                        <span class="font-medium text-sm text-desa-secondary">Tukang Bangunan</span>
+                        <span class="font-medium text-sm text-desa-secondary">
+                            {{ item.head_of_family.occupation }}</span>
                     </p>
                 </div>
             </div>
@@ -73,16 +83,17 @@ defineProps({
                         alt="icon">
                 </div>
                 <div class="flex flex-col gap-1">
-                    <p class="font-semibold text-lg leading-5 text-desa-dark-green text-nowrap">Rp110.000.000
+                    <p class="font-semibold text-lg leading-5 text-desa-dark-green text-nowrap">
+                        Rp {{ formatRupiah(item.amount) }}
                     </p>
                     <p class="font-medium text-sm text-desa-secondary">Nominal Pengajuan</p>
                 </div>
             </div>
             <div class="flex items-center gap-3 justify-end w-[252px] shrink-0">
-                <a href="kd-pengajuan-bansos-manage.html"
+                <RouterLink :to="{ name: 'manage-social-assistance-recipient', params: { id: item.id } }"
                     class="flex items-center shrink-0 gap-[10px] rounded-2xl py-4 px-6 bg-desa-black">
                     <span class="font-medium text-white">Manage</span>
-                </a>
+                </RouterLink>
             </div>
         </div>
     </div>

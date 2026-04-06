@@ -7,6 +7,7 @@ import HeadOfFamily from "@/views/head-of-family/HeadOfFamily.vue";
 import HeadOfFamilyCreate from "@/views/head-of-family/HeadOfFamilyCreate.vue";
 import Login from "@/views/Login.vue";
 import SocialAssistanceRecipient from "@/views/social-assistance-recipient/SocialAssistanceRecipient.vue";
+import SocialAssistanceRecipients from "@/views/social-assistance-recipient/SocialAssistanceRecipients.vue";
 import SocialAssistance from "@/views/social-assistance/SocialAssistance.vue";
 import SocialAssistanceCreate from "@/views/social-assistance/SocialAssistanceCreate.vue";
 import SocialAssistanceEdit from "@/views/social-assistance/socialAssistanceEdit.vue";
@@ -97,6 +98,15 @@ const router = createRouter({
           path: "social-assistance-recipient",
           name: "social-assistance-recipient",
           component: SocialAssistanceRecipient,
+          meta: {
+            requiresAuth: true,
+            permission: "social-assistance-recipient-list"
+          }
+        },
+        {
+          path: "social-assistance-recipient/:id",
+          name: "manage-social-assistance-recipient",
+          component: SocialAssistanceRecipients,
           meta: {
             requiresAuth: true,
             permission: "social-assistance-recipient-list"

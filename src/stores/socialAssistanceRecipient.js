@@ -3,10 +3,10 @@ import axiosInstance from "../plugins/axios";
 import { handleError } from "@/helpers/errorHelper";
 import router from "@/router";
 
-// useSocialAssistanceRecipientStores
+
 export const useSocialAssistanceRecipientStores = defineStore("social-assistance-recipient", {
     state: () => ({
-        SocialAssistanceRecipient: [],
+        socialAssistanceRecipients: [],
         meta: {
             current_page: 1,
             last_page: 1,
@@ -22,16 +22,30 @@ export const useSocialAssistanceRecipientStores = defineStore("social-assistance
             this.loading = true
 
             try {
-                const response = await axiosInstance.get(`social-assistance-recipient`, { params })
+                const response = await axiosInstance.get(`social-assistance-recipient/all/paginated`, { params })
 
-                this.SocialAssistanceRecipient = response.data.data.data
+                this.socialAssistanceRecipients = response.data.data.data
                 this.meta = response.data.data.meta
             } catch (error) {
                 this.error = handleError(error)
             } finally {
                 this.loading = false
             }
+        },
+
+        async fetchSocialAssistanceRecipient(id) {
+            this.loading = true
+
+            try {
+                const response = await axiosInstance.get(`social-assistance-recipient/${id}`)
+                return response.data.data
+            } catch (error) {
+                this.error = handleError(error)
+            } finally {
+                this.loading = false
+            }
         }
+
     }
 
 })

@@ -1,10 +1,10 @@
 <script setup>
-// import CardList from '@/components/social-assistance-recipient/CardList.vue';
 import { storeToRefs } from 'pinia';
 import { ref, onMounted, watch } from 'vue';
 import { debounce } from 'lodash';
 import Pagination from '@/components/ui/Pagination.vue';
 import { useSocialAssistanceRecipientStores } from '@/stores/socialAssistanceRecipient';
+import CardList from '@/components/social-assistance-recipient/CardList.vue';
 
 const socialAssistanceRecipientStore = useSocialAssistanceRecipientStores();
 const { socialAssistanceRecipients, meta, loading, error, success } = storeToRefs(socialAssistanceRecipientStore);
@@ -40,8 +40,6 @@ watch(filters, () => {
 
 </script>
 
-<!-- LANJUTKAN PADA MENIT 05:00 -->
-
 <template>
     <div id="Content" class="relative flex flex-col flex-1 gap-6 p-6 pb-[30px] w-full shrink-0">
         <div id="Header" class="flex items-center justify-between">
@@ -51,7 +49,7 @@ watch(filters, () => {
             <form id="Page-Search" class="flex items-center justify-between">
                 <div class="flex flex-col gap-3 w-[370px] shrink-0">
                     <label class="relative group peer w-full valid">
-                        <input type="text" placeholder="Cari nama Pengajuan bantuan social"
+                        <input v-model="filters.search" type="text" placeholder="Cari nama Pengajuan bantuan social"
                             class="appearance-none outline-none w-full h-14 rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 pl-12 pr-6 gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300">
                         <div class="absolute transform -translate-y-1/2 top-1/2 left-4 flex size-6 shrink-0">
                             <img src="@/assets/images/icons/user-search-secondary-green.svg"
@@ -65,7 +63,7 @@ watch(filters, () => {
                     <div class="flex items-center gap-[10px]">
                         <span class="font-medium leading-5">Show</span>
                         <div class="relative">
-                            <select name="" id=""
+                            <select v-model="serverOptions.row_per_page" name="" id=""
                                 class="appearance-none outline-none w-full h-14 rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-6 pr-[52px] gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300">
                                 <option value="5" selected>5 Entries</option>
                                 <option value="10">10 Entries</option>
@@ -86,82 +84,10 @@ watch(filters, () => {
                     </button>
                 </div>
             </form>
-            <div class="card flex flex-col gap-4 rounded-3xl p-6 bg-white">
-                <div class="flex items-center justify-between">
-                    <p class="flex items-center gap-1">
-                        <img src="@/assets/images/icons/calendar-2-secondary-green.svg"
-                            class="flex size-[18px] shrink-0" alt="icon">
-                        <span class="font-medium text-sm text-desa-secondary">Tue, 09 Jan 2025</span>
-                    </p>
-                    <div class="badge rounded-full p-3 gap-2 flex w-[100px] justify-center shrink-0 bg-desa-red">
-                        <span class="font-semibold text-xs text-white uppercase">Ditolak</span>
-                    </div>
-                </div>
-                <hr class="border-desa-background">
-                <div class="flex items-center w-full">
-                    <div class="flex w-[100px] h-20 shrink-0 rounded-2xl overflow-hidden bg-desa-foreshadow">
-                        <img src="@/assets/images/thumbnails/kk-bansos-1.png" class="w-full h-full object-cover"
-                            alt="photo">
-                    </div>
-                    <div class="flex flex-col gap-[6px] w-full ml-4 mr-9">
-                        <p class="font-semibold text-lg leading-[22.5px] line-clamp-1">Bantuan Untuk Rakyat Kurang Mampu
-                        </p>
-                        <p class="flex items-center gap-1">
-                            <img src="@/assets/images/icons/profile-secondary-green.svg"
-                                class="flex size-[18px] shrink-0" alt="icon">
-                            <span class="font-medium text-sm text-desa-secondary">PT Shaynakit Meningkatkan
-                                Bangsa</span>
-                        </p>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="flex flex-col gap-1 text-right">
-                            <p class="font-semibold text-lg leading-5 text-desa-dark-green text-nowrap">Rp120.000.000
-                            </p>
-                            <p class="font-medium text-sm text-desa-secondary">Uang Tunai</p>
-                        </div>
-                        <div
-                            class="flex size-[52px] rounded-2xl items-center justify-center bg-desa-foreshadow overflow-hidden">
-                            <img src="@/assets/images/icons/money-dark-green.svg" class="flex size-6 shrink-0"
-                                alt="icon">
-                        </div>
-                    </div>
-                </div>
-                <hr class="border-desa-background">
-                <div class="flex items-center gap-6 justify-between">
-                    <div class="flex items-center gap-3 w-[302px] shrink-0">
-                        <div class="flex size-[54px] rounded-full bg-desa-foreshadow overflow-hidden">
-                            <img src="@/assets/images/photos/kk-photo-1.png" class="w-full h-full object-cover"
-                                alt="icon">
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            <p class="font-semibold text-lg leading-5 text-desa-black">Feri Prio Utomo</p>
-                            <p class="flex items-center gap-1">
-                                <img src="@/assets/images/icons/briefcase-secondary-green.svg"
-                                    class="flex size-[18px] shrink-0" alt="icon">
-                                <span class="font-medium text-sm text-desa-secondary">Tukang Bangunan</span>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-3 w-[302px] shrink-0">
-                        <div
-                            class="flex size-[52px] rounded-2xl items-center justify-center bg-desa-foreshadow overflow-hidden">
-                            <img src="@/assets/images/icons/receive-square-2-dark-green.svg"
-                                class="flex size-6 shrink-0" alt="icon">
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            <p class="font-semibold text-lg leading-5 text-desa-dark-green text-nowrap">Rp110.000.000
-                            </p>
-                            <p class="font-medium text-sm text-desa-secondary">Nominal Pengajuan</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-3 justify-end w-[252px] shrink-0">
-                        <a href="kd-pengajuan-bansos-manage.html"
-                            class="flex items-center shrink-0 gap-[10px] rounded-2xl py-4 px-6 bg-desa-black">
-                            <span class="font-medium text-white">Manage</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
+
+            <CardList v-for="socialAssistanceRecipient in socialAssistanceRecipients"
+                :key="socialAssistanceRecipient.id" :item="socialAssistanceRecipient" v-if="!loading" />
+
             <Pagination :meta="meta" :server-options="serverOptions" />
         </section>
     </div>
