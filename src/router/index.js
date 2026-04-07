@@ -2,6 +2,7 @@ import Auth from "@/layouts/Auth.vue";
 import Main from "@/layouts/Main.vue";
 import { useAuthStore } from "@/stores/auth";
 import Dashboard from "@/views/Dashboard.vue";
+import Developments from "@/views/development/Developments.vue";
 import HeadOfFamilies from "@/views/head-of-family/HeadOfFamilies.vue";
 import HeadOfFamily from "@/views/head-of-family/HeadOfFamily.vue";
 import HeadOfFamilyCreate from "@/views/head-of-family/HeadOfFamilyCreate.vue";
@@ -110,6 +111,15 @@ const router = createRouter({
           meta: {
             requiresAuth: true,
             permission: "social-assistance-recipient-list"
+          }
+        },
+        {
+          path: "development",
+          name: "development",
+          component: Developments,
+          meta: {
+            requiresAuth: true,
+            permission: "development-list"
           }
         }
       ],
