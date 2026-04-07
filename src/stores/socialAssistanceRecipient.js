@@ -44,7 +44,28 @@ export const useSocialAssistanceRecipientStores = defineStore("social-assistance
             } finally {
                 this.loading = false
             }
+        },
+
+        async updateSocialAssistanceRecipient(payload) {
+            this.loading = true
+
+            try {
+                const response = await axiosInstance.post(`social-assistance-recipient/${payload.id}`, {
+                    ...payload,
+                    _method: 'PUT'
+                })
+                this.success = response.data.message
+
+                router.push({ name: 'social-assistance-recipient', params: { id: payload.id } })
+            } catch (error) {
+                this.error = handleError(error)
+            } finally {
+                this.loading = false
+            }
+
+
         }
+
 
     }
 

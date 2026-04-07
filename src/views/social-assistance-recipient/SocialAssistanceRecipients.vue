@@ -1,26 +1,63 @@
 <script setup>
-import { formatRupiah } from '@/helpers/format';
+import { formatRupiah, formatToClientTimeZone, parseRupiah } from '@/helpers/format';
 import { useSocialAssistanceRecipientStores } from '@/stores/socialAssistanceRecipient';
-import { storeToRefs } from 'pinia';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { formatToClientTimeZone } from '@/helpers/format';
 
 const route = useRoute()
-const router = useRouter()
 
-const socialAssistance = ref({});
+const socialAssistanceRecipient = ref({
+    id: null,
+    social_assistance_id: null,
+    head_of_family_id: null,
+    amount: null,
+    reason: null,
+    bank: null,
+    account_number: null,
+    proof: null,
+    proof_url: null,
+    status: null,
+});
+
+const profilePictureError = ref('');
 
 const socialAssistanceRecipientStore = useSocialAssistanceRecipientStores();
-const { loading, error, success } = storeToRefs(socialAssistanceRecipientStore)
-const { fetchSocialAssistanceRecipient } = socialAssistanceRecipientStore
+const { fetchSocialAssistanceRecipient, updateSocialAssistanceRecipient } = socialAssistanceRecipientStore
 
 const fetchData = async () => {
     const response = await fetchSocialAssistanceRecipient(route.params.id)
-    socialAssistance.value = response
+    socialAssistanceRecipient.value = response
+    socialAssistanceRecipient.value.head_of_family_id = response.head_of_family?.id
+    socialAssistanceRecipient.value.social_assistance_id = response.social_assistance?.id
+
+    socialAssistanceRecipient.value.proof_url = response.proof_url ?? response.proof ?? null
 }
 
+const handleSubmit = async () => {
+    await updateSocialAssistanceRecipient({
+        ...socialAssistanceRecipient.value,
+        amount: parseRupiah(socialAssistanceRecipient.value.amount)
+    })
+}
+
+const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file.size > 2048 * 1024) {
+        profilePictureError.value = 'Foto Profil maksimal berukuran 2048 kilobita.';
+        event.target.value = '';
+        socialAssistanceRecipient.value.proof = '';
+        socialAssistanceRecipient.value.proof_url = '';
+        return;
+    }
+
+    profilePictureError.value = '';
+    socialAssistanceRecipient.value.proof = file;
+    socialAssistanceRecipient.value.proof_url = URL.createObjectURL(file);
+};
+
+
 onMounted(fetchData);
+
 </script>
 
 <template>
@@ -30,10 +67,10 @@ onMounted(fetchData);
                 <p class="last-of-type:text-desa-dark-green last-of-type:font-semibold capitalize ">Pengajuan Bantuan
                     sosial</p>
                 <span>/</span>
-                <p class="last-of-type:text-desa-dark-green last-of-type:font-semibold capitalize ">penyetujuan bansos
+                <p class="last-of-type:text-desa-dark-green last-of-type:font-semibold capitalize ">Manage bansos
                 </p>
             </div>
-            <h1 class="font-semibold text-2xl">Penyetujuan Bansos </h1>
+            <h1 class="font-semibold text-2xl">Manage Bansos </h1>
         </div>
     </div>
     <div class="flex gap-[14px]">
@@ -42,19 +79,30 @@ onMounted(fetchData);
             <p class="font-medium leading-5 text-desa-secondary">Detail Bantuan Sosial</p>
             <div class="flex items-center justify-between gap-4">
                 <div class="flex w-[120px] h-[100px] shrink-0 rounded-2xl overflow-hidden bg-desa-foreshadow">
-                    <img src="@/assets/images/thumbnails/kk-bansos-1.png" class="w-full h-full object-cover"
-                        alt="photo">
+                    <img :src="socialAssistanceRecipient.social_assistance?.thumbnail"
+                        class="w-full h-full object-cover" alt="photo">
                 </div>
-                <div class="badge rounded-full p-3 gap-2 flex w-[100px] justify-center shrink-0 bg-desa-yellow">
+                <div class="badge rounded-full p-3 gap-2 flex w-[100px] justify-center shrink-0 bg-desa-yellow"
+                    v-if="socialAssistanceRecipient.status === 'pending'">
                     <span class="font-semibold text-xs text-white uppercase">Menunggu</span>
+                </div>
+                <div class="badge rounded-full p-3 gap-2 flex w-[100px] justify-center shrink-0 bg-desa-green"
+                    v-if="socialAssistanceRecipient.status === 'approved'">
+                    <span class="font-semibold text-xs text-white uppercase">Diterima</span>
+                </div>
+                <div class="badge rounded-full p-3 gap-2 flex w-[100px] justify-center shrink-0 bg-desa-red"
+                    v-if="socialAssistanceRecipient.status === 'rejected'">
+                    <span class="font-semibold text-xs text-white uppercase">Ditolak</span>
                 </div>
             </div>
             <div class="flex flex-col gap-[6px] w-full">
-                <p class="font-semibold text-xl line-clamp-1">Bantuan Untuk Rakyat Kurang Mampu</p>
+                <p class="font-semibold text-xl line-clamp-1">{{ socialAssistanceRecipient.social_assistance?.name }}
+                </p>
                 <p class="flex items-center gap-1">
                     <img src="@/assets/images/icons/profile-secondary-green.svg" class="flex size-[18px] shrink-0"
                         alt="icon">
-                    <span class="font-medium text-sm text-desa-secondary">PT Shaynakit Meningkatkan Bangsa</span>
+                    <span class="font-medium text-sm text-desa-secondary">{{
+                        socialAssistanceRecipient.social_assistance?.provider }}</span>
                 </p>
             </div>
             <hr class="border-desa-foreshadow">
@@ -63,7 +111,8 @@ onMounted(fetchData);
                     <img src="@/assets/images/icons/money-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
                 </div>
                 <div class="flex flex-col gap-1 w-full">
-                    <p class="font-semibold text-lg leading-[22.5px] text-desa-dark-green">Rp120.000.000</p>
+                    <p class="font-semibold text-lg leading-[22.5px] text-desa-dark-green">Rp {{
+                        formatRupiah(socialAssistanceRecipient.social_assistance?.name) }}</p>
                     <span class="font-medium text-desa-secondary">
                         Uang Tunai
                     </span>
@@ -87,7 +136,8 @@ onMounted(fetchData);
                     <img src="@/assets/images/icons/profile-2user-blue.svg" class="flex size-6 shrink-0" alt="icon">
                 </div>
                 <div class="flex flex-col gap-1 w-full">
-                    <p class="font-semibold text-lg leading-[22.5px] text-desa-blue">15.600 Warga</p>
+                    <p class="font-semibold text-lg leading-[22.5px] text-desa-blue">{{
+                        socialAssistanceRecipient.social_assistance?.social_assistance_recipients?.length }} Warga</p>
                     <span class="font-medium text-desa-secondary">
                         Total Pengajuan
                     </span>
@@ -96,10 +146,7 @@ onMounted(fetchData);
             <hr class="border-desa-foreshadow">
             <div class="flex flex-col gap-3">
                 <p class="font-medium text-sm text-desa-secondary">Tentang Bantuan</p>
-                <p class="font-medium leading-8">Program Bantuan Sosial ini hadir untuk memberikan dukungan nyata bagi
-                    masyarakat yang membutuhkan. Kami berkomitmen membantu memenuhi kebutuhan dasar seperti pangan,
-                    kesehatan, dan pendidikan, demi meningkatkan kualitas hidup. Dengan semangat gotong royong, kami
-                    mengajak semua pihak untuk bersama-sama menciptakan perubahan positif.</p>
+                <p class="font-medium leading-8">{{ socialAssistanceRecipient.social_assistance?.description }}</p>
             </div>
         </section>
         <section class="flex flex-col flex-1 h-fit shrink-0 rounded-3xl p-6 gap-6 bg-white">
@@ -109,11 +156,13 @@ onMounted(fetchData);
                     <img src="@/assets/images/photos/kk-photo-1.png" class="w-full h-full object-cover" alt="icon">
                 </div>
                 <div class="flex flex-col gap-1">
-                    <p class="font-semibold text-lg leading-5 text-desa-black">Feri Prio Utomo</p>
+                    <p class="font-semibold text-lg leading-5 text-desa-black">{{
+                        socialAssistanceRecipient.head_of_family?.user.name }}</p>
                     <p class="flex items-center gap-1">
                         <img src="@/assets/images/icons/briefcase-secondary-green.svg" class="flex size-[18px] shrink-0"
                             alt="icon">
-                        <span class="font-medium text-sm text-desa-secondary">Tukang Bangunan</span>
+                        <span class="font-medium text-sm text-desa-secondary">{{
+                            socialAssistanceRecipient.head_of_family?.occupation }}</span>
                     </p>
                 </div>
             </div>
@@ -125,7 +174,8 @@ onMounted(fetchData);
                         alt="icon">
                 </div>
                 <div class="flex flex-col gap-1">
-                    <p class="font-semibold text-lg leading-5">6 Anggota</p>
+                    <p class="font-semibold text-lg leading-5">{{
+                        socialAssistanceRecipient.head_of_family?.family_members.length }} Anggota</p>
                     <p class="font-medium text-sm text-desa-secondary">Total Keluarga</p>
                 </div>
             </div>
@@ -136,8 +186,9 @@ onMounted(fetchData);
                     <img src="@/assets/images/icons/keyboard-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
                 </div>
                 <div class="flex flex-col gap-1">
-                    <p class="font-semibold text-lg leading-5">30183910948390193</p>
-                    <p class="font-medium text-sm text-desa-secondary">30183910948390193</p>
+                    <p class="font-semibold text-lg leading-5">{{
+                        socialAssistanceRecipient.head_of_family?.identity_number }}</p>
+                    <p class="font-medium text-sm text-desa-secondary">Nomor Induk Kependudukan</p>
                 </div>
             </div>
             <hr class="border-desa-background">
@@ -147,7 +198,8 @@ onMounted(fetchData);
                     <img src="@/assets/images/icons/calendar-2-dark-green.svg" class="flex size-6 shrink-0" alt="icon">
                 </div>
                 <div class="flex flex-col gap-1">
-                    <p class="font-semibold text-lg leading-5">Tue, 09 Jan 2025</p>
+                    <p class="font-semibold text-lg leading-5">{{
+                        formatToClientTimeZone(socialAssistanceRecipient.created_at) }}</p>
                     <p class="font-medium text-sm text-desa-secondary">Tanggal Pengajuan</p>
                 </div>
             </div>
@@ -159,15 +211,15 @@ onMounted(fetchData);
                         alt="icon">
                 </div>
                 <div class="flex flex-col gap-1">
-                    <p class="font-semibold text-lg leading-5">Rp5.120.000</p>
+                    <p class="font-semibold text-lg leading-5">Rp {{ formatRupiah(socialAssistanceRecipient.amount) }}
+                    </p>
                     <p class="font-medium text-sm text-desa-secondary">Nominal Pengajuan</p>
                 </div>
             </div>
             <hr class="border-desa-background">
             <div class="flex flex-col gap-1">
                 <p class="font-medium text-sm text-desa-secondary">Pesan Pengajuan:</p>
-                <p class="font-medium leading-8">“Saya akan menggunakan dana tersebut untuk kebutuhan membeli beras dan
-                    bahan pokok lainnya yang akan dikonsumsi oleh saya dan keluarga saya.”</p>
+                <p class="font-medium leading-8">“ {{ socialAssistanceRecipient.reason }} ”</p>
             </div>
             <hr class="border-desa-background">
             <div class="flex flex-col gap-6">
@@ -175,45 +227,59 @@ onMounted(fetchData);
                 <div class="flex items-center gap-3">
                     <div
                         class="flex w-[120px] h-[60px] rounded-2xl border border-desa-background py-3 px-0.5 items-center justify-center bg-desa-blue/10 overflow-hidden">
-                        <img src="@/assets/images/logos/bca.svg" class="w-full h-full object-contain" alt="icon">
+                        <img src="@/assets/images/logos/bca.svg" class="w-full h-full object-contain" alt="icon"
+                            v-if="socialAssistanceRecipient.bank === 'bca'">
+                        <img src="@/assets/images/logos/bca.svg" class="w-full h-full object-contain" alt="icon"
+                            v-if="socialAssistanceRecipient.bank === 'bri'">
+                        <img src="@/assets/images/logos/bca.svg" class="w-full h-full object-contain" alt="icon"
+                            v-if="socialAssistanceRecipient.bank === 'bni'">
+                        <img src="@/assets/images/thumbnails/kk-mandiri.png" class="w-full h-full object-contain"
+                            alt="icon" v-if="socialAssistanceRecipient.bank === 'bni'">
                     </div>
                     <div>
-                        <p class="font-medium text-sm text-desa-secondary">Saputra Dwi Putra</p>
+                        <p class="font-medium text-sm text-desa-secondary">{{
+                            socialAssistanceRecipient.head_of_family?.user.name
+                            }}</p>
                         <div class="flex items-center gap-1">
                             <img src="@/assets/images/icons/document-copy-dark-green.svg"
                                 class="flex size-[18px] shrink-0" alt="icon">
-                            <p class="font-semibold text-lg text-desa-dark-green">999 2222 0590</p>
+                            <p class="font-semibold text-lg text-desa-dark-green">{{
+                                socialAssistanceRecipient.account_number }}</p>
                         </div>
                     </div>
                 </div>
             </div>
             <hr class="border-desa-background">
-            <form action="kd-pengajuan-bansos.html" class="flex flex-col gap-6">
+            <form @submit.prevent="handleSubmit" class="flex flex-col gap-6">
                 <p class="font-medium text-sm text-desa-secondary">Bukti Pemberian Bansos</p>
-                <div class="flex items-center justify-between">
+                <div class="flex-1 flex items-center justify-between">
                     <div id="Photo-Preview"
                         class="flex itce justify-center w-[120px] h-[100px] rounded-2xl overflow-hidden bg-desa-foreshadow">
-                        <img id="Photo" src="@/assets/images/thumbnails/thumbnail-bansos-preview.svg" alt="image"
+                        <img id="Photo" :src="socialAssistanceRecipient.proof_url" alt="image"
                             class="size-full object-cover" />
                     </div>
                     <div class="relative">
-                        <input id="File" type="file" name="file"
-                            class="absolute opacity-0 left-0 w-full top-0 h-full" />
+                        <input id="File" type="file" name="file" class="absolute opacity-0 left-0 w-full top-0 h-full"
+                            @change="handleImageChange" ref="proof" />
                         <button id="Upload" type="button"
-                            class="relative flex items-center py-4 px-6 rounded-2xl bg-desa-black gap-[10px]">
+                            class="relative flex items-center py-4 px-6 rounded-2xl bg-desa-black gap-[10px]"
+                            @click="$refs.proof.click()">
                             <img src="@/assets/images/icons/send-square-white.svg" alt="icon" class="size-6 shrink-0" />
                             <p class="font-medium leading-5 text-white">Upload</p>
                         </button>
+                        <p v-if="profilePictureError" class="text-red-500 text-sm mt-1">{{ profilePictureError }}</p>
                     </div>
                 </div>
                 <hr class="border-desa-background">
                 <div class="flex items-center gap-3 w-full">
                     <button type="submit"
-                        class="flex items-center w-full justify-center gap-[10px] rounded-2xl py-4 px-6 bg-desa-red/10">
+                        class="flex items-center w-full justify-center gap-[10px] rounded-2xl py-4 px-6 bg-desa-red/10"
+                        @click="socialAssistanceRecipient.status = 'rejected'">
                         <span class="font-medium text-desa-red">Tolak</span>
                     </button>
                     <button type="submit"
-                        class="flex items-center w-full justify-center gap-[10px] rounded-2xl py-4 px-6 bg-desa-dark-green">
+                        class="flex items-center w-full justify-center gap-[10px] rounded-2xl py-4 px-6 bg-desa-dark-green"
+                        @click="socialAssistanceRecipient.status = 'approved'">
                         <span class="font-medium text-white">Setuju</span>
                     </button>
                 </div>
