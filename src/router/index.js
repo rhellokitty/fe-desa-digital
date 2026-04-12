@@ -2,6 +2,7 @@ import Auth from "@/layouts/Auth.vue";
 import Main from "@/layouts/Main.vue";
 import { useAuthStore } from "@/stores/auth";
 import Dashboard from "@/views/Dashboard.vue";
+import Development from "@/views/development/Development.vue";
 import Developments from "@/views/development/Developments.vue";
 import HeadOfFamilies from "@/views/head-of-family/HeadOfFamilies.vue";
 import HeadOfFamily from "@/views/head-of-family/HeadOfFamily.vue";
@@ -117,6 +118,15 @@ const router = createRouter({
           path: "development",
           name: "development",
           component: Developments,
+          meta: {
+            requiresAuth: true,
+            permission: "development-list"
+          }
+        },
+        {
+          path: "developments/id",
+          name: "manage-development",
+          component: Development,
           meta: {
             requiresAuth: true,
             permission: "development-list"

@@ -40,8 +40,6 @@ watch(filters, () => {
 
 </script>
 
-<!-- LANJUTKAN PADA MENIT 08:00 -->
-
 <template>
     <div id="Header" class="flex items-center justify-between">
         <h1 class="font-semibold text-2xl">Pembangunan Desa</h1>
