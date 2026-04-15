@@ -35,7 +35,7 @@ export const useDevelopmentStore = defineStore("development", {
             }
         },
 
-        async fetchSocialAssistance(id) {
+        async fetchDevelopment(id) {
             this.loading = true
 
             try {
@@ -48,6 +48,37 @@ export const useDevelopmentStore = defineStore("development", {
                 this.loading = false
             }
         },
+
+        async updateDevelopment(payload) {
+            this.loading = true
+
+            try {
+                const response = await axiosInstance.post(`development/${payload.id}`, {
+                    ...payload,
+                    _method: 'PUT'
+                })
+                this.success = response.data.message
+
+                router.push({ name: 'edit-development', params: { id: payload.id } })
+            } catch (error) {
+                this.error = handleError(error)
+            } finally {
+                this.loading = false
+            }
+        },
+
+        async deleteDevelopment(id) {
+            this.loading = true
+            try {
+                const response = await axiosInstance.delete(`development/${id}`)
+
+                this.success = response.data.message
+            } catch (error) {
+                this.error = handleError(error)
+            } finally {
+                this.loading = false
+            }
+        }
 
     }
 
