@@ -1,8 +1,8 @@
 <script setup>
-import { formatRupiah } from '@/helpers/format';
+import { formatRupiah, parseRupiah } from '@/helpers/format';
 import { useDevelopmentStore } from '@/stores/development';
 import { storeToRefs } from 'pinia';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Input from '@/components/ui/Input.vue';
 import { formatToClientTimeZone } from '@/helpers/format';
@@ -11,6 +11,8 @@ import iconEditSecondaryGreen from '@/assets/images/icons/edit-secondary-green.s
 import iconEditBlack from '@/assets/images/icons/edit-black.svg';
 import iconProfileCircleSecondaryGreen from '@/assets/images/icons/profile-circle-secondary-green.svg';
 import iconProfileCircleBlack from '@/assets/images/icons/profile-circle-black.svg';
+import iconCalendar2SecondaryGreen from '@/assets/images/icons/calendar-2-secondary-green.svg';
+import iconCalendar2Black from '@/assets/images/icons/calendar-2-black.svg';
 
 
 const route = useRoute()
@@ -39,13 +41,7 @@ const fetchData = async () => {
     development.value = response
     development.value.thumbnail_url = response.thumbnail
     development.value.thumbnail = null
-    development.value.day = Math.round((new Date(development.value.end_date).getTime() - new Date(development.value.start_date).getTime()) / 24 * 60 * 60 * 1000)
-}
-
-const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    development.value.thumbnail = file;
-    development.value.thumbnail_url = URL.createObjectURL(file);
+    development.value.day = Math.round((new Date(development.value.end_date).getTime() - new Date(development.value.start_date).getTime()) / (24 * 60 * 60 * 1000))
 }
 
 const handleSubmit = async () => {
@@ -55,16 +51,14 @@ const handleSubmit = async () => {
     })
 }
 
-// watch(() => development.value.amount, (newAmount) => {
-//     development.value.amount = formatRupiah(newAmount);
-// })
+watch(() => development.value.amount, (newAmount) => {
+    development.value.amount = formatRupiah(newAmount);
+})
 
-// watch(() => development.value.day, (newDay) => {
-//     development.value.day = newDay;
-//     development.value.end_date = formatToClientTimeZone(new Date(new Date(development.value.start_date).getTime() + newDay * 24 * 60 * 60 * 1000));
-// })
-
-// LANJUTKAN PADA MENIT 8:28
+watch(() => development.value.day, (newDay) => {
+    development.value.day = newDay;
+    development.value.end_date = new Date(new Date(development.value.start_date).getTime() + newDay * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+})
 
 onMounted(fetchData);
 </script>
@@ -125,11 +119,10 @@ onMounted(fetchData);
                 <div class="flex-1 flex items-center justify-between">
                     <div id="Photo-Preview"
                         class="flex itce justify-center w-[120px] h-[100px] rounded-2xl overflow-hidden bg-desa-foreshadow">
-                        <img id="Photo" src="@/assets/images/thumbnails/thumbnail-bansos-preview.svg" alt="image"
-                            class="size-full object-cover" />
+                        <img id="Photo" :src="development.thumbnail_url" alt="image" class="size-full object-cover" />
                     </div>
                     <div class="relative">
-                        <input required id="File" type="file" name="file"
+                        <input id="File" type="file" name="file"
                             class="absolute opacity-0 left-0 w-full top-0 h-full" />
                         <button id="Upload" type="button"
                             class="relative flex items-center py-4 px-6 rounded-2xl bg-desa-black gap-[10px]">
@@ -162,7 +155,7 @@ onMounted(fetchData);
                 <div class="flex flex-1 gap-6 shrink-0">
                     <label
                         class="group flex w-full items-center h-14 rounded-2xl p-4 ring-[1.5px] ring-desa-background gap-2 has-[:checked]:ring-none has-[:checked]:bg-desa-foreshadow transition-setup">
-                        <input type="radio" checked name="status" id=""
+                        <input v-model="development.status" value="ongoing" type="radio" checked name="status" id=""
                             class="flex size-[18px] shrink-0 accent-desa-secondary checked:accent-desa-dark-green transition-setup">
                             <span
                                 class="font-medium leading-5 text-desa-secondary w-full group-has-[:checked]:text-desa-dark-green transition-setup">
@@ -177,7 +170,7 @@ onMounted(fetchData);
                     </label>
                     <label
                         class="group flex w-full items-center h-14 rounded-2xl p-4 ring-[1.5px] ring-desa-background gap-2 has-[:checked]:ring-none has-[:checked]:bg-desa-foreshadow transition-setup">
-                        <input type="radio" name="status" id=""
+                        <input v-model="development.status" value="completed" type="radio" name="status" id=""
                             class="flex size-[18px] shrink-0 accent-desa-secondary checked:accent-desa-dark-green transition-setup">
                             <span
                                 class="font-medium leading-5 text-desa-secondary w-full group-has-[:checked]:text-desa-dark-green transition-setup">
@@ -197,15 +190,9 @@ onMounted(fetchData);
                 <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Tanggal Pembangunan</p>
                 <div class="flex items-center gap-6 flex-1 shrink-0">
                     <label class="relative group peer w-full">
-                        <input required type="date" value="2017-06-01" id="birthdate"
-                            class="appearance-none outline-none w-full h-14 rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black p-4 pl-12 gap-2 font-medium invalid:text-desa-secondary transition-all duration-300 [&::-webkit-calendar-picker-indicator]:hidden"
-                            onclick="this.showPicker();">
-                            <div class="absolute transform -translate-y-1/2 top-1/2 left-4 flex size-6 shrink-0">
-                                <img src="@/assets/images/icons/calendar-2-secondary-green.svg"
-                                    class="size-6 hidden group-has-[:invalid]:flex" alt="icon">
-                                <img src="@/assets/images/icons/calendar-2-black.svg"
-                                    class="size-6 flex group-has-[:invalid]:hidden" alt="icon">
-                            </div>
+                        <Input v-model="development.start_date" type="date" placeholder="Ketik Tanggal Pembangunan"
+                            :error-message="error?.start_date" :icon="iconCalendar2SecondaryGreen"
+                            :filled-icon="iconCalendar2Black" />
                     </label>
                 </div>
             </section>
@@ -214,7 +201,7 @@ onMounted(fetchData);
                 <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Hari yang dibutuhkan</p>
                 <div class="flex flex-col gap-3 flex-1 shrink-0">
                     <label class="relative group peer w-full">
-                        <input type="number" value="12" placeholder="Ketik hari yang dibutuhkan"
+                        <input v-model="development.day" type="number" placeholder="Ketik hari yang dibutuhkan"
                             class="appearance-none outline-none w-full h-14 rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-12 pr-[98px] gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300">
                             <div class="absolute transform -translate-y-1/2 top-1/2 left-4 flex size-6 shrink-0">
                                 <img src="@/assets/images/icons/timer-secondary-green.svg"
@@ -234,19 +221,20 @@ onMounted(fetchData);
             <section id="Deskripsi" class="flex items-center justify-between">
                 <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Deskripsi Pembangunan</p>
                 <div class="flex flex-col gap-3 flex-1 shrink-0">
-                    <textarea name="" id="" placeholder="Jelaskan lebih detail tentang pembangunan" rows="6"
+                    <textarea v-model="development.description" name="" id=""
+                        placeholder="Jelaskan lebih detail tentang pembangunan" rows="6"
                         class="appearance-none outline-none w-full rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-4 gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt, cupiditate.
-                                    </textarea>
+                        </textarea>
                 </div>
             </section>
             <hr class="border-desa-background w-[calc(100%+48px)] -mx-6" />
             <section id="Buttons" class="flex items-center justify-end gap-4">
-                <a href="kd-kepala-rumah.html">
+                <RouterLink :to="{ name: 'manage-development', params: { id: development.id } }">
                     <div
                         class="py-[18px] rounded-2xl bg-desa-red w-[180px] text-center flex justify-center font-medium text-white">
                         Batal, Tidak jadi</div>
-                </a>
-                <button disabled id="submitButton" type="submit"
+                </RouterLink>
+                <button id="submitButton" type="submit"
                     class="py-[18px] rounded-2xl disabled:bg-desa-grey w-[180px] text-center flex justify-center font-medium text-white bg-desa-dark-green transition-all duration-300">Save
                     Changes</button>
             </section>

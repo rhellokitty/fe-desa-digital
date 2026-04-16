@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import axiosInstance from "../plugins/axios";
 import { handleError } from "@/helpers/errorHelper";
+import router from "@/router";
 
 export const useDevelopmentStore = defineStore("development", {
     state: () => ({
@@ -59,7 +60,7 @@ export const useDevelopmentStore = defineStore("development", {
                 })
                 this.success = response.data.message
 
-                router.push({ name: 'edit-development', params: { id: payload.id } })
+                router.push({ name: 'manage-development', params: { id: payload.id } })
             } catch (error) {
                 this.error = handleError(error)
             } finally {

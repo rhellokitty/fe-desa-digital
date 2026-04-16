@@ -196,5 +196,3 @@ onMounted(fetchData);
         @close="showModalDelete = false" @confirm="handleDelete" />
 
 </template>
-
-<!-- LANJUTKAN 9:17 -->
