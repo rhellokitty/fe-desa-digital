@@ -68,6 +68,20 @@ export const useDevelopmentStore = defineStore("development", {
             }
         },
 
+        async createDevelopment(payload) {
+            this.loading = true
+
+            try {
+                const response = await axiosInstance.post("development", payload)
+                this.success = response.data.message
+                router.push({ name: 'development' })
+            } catch (error) {
+                this.error = handleError(error)
+            } finally {
+                this.loading = false
+            }
+        },
+
         async deleteDevelopment(id) {
             this.loading = true
             try {

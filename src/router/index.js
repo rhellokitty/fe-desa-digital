@@ -3,6 +3,7 @@ import Main from "@/layouts/Main.vue";
 import { useAuthStore } from "@/stores/auth";
 import Dashboard from "@/views/Dashboard.vue";
 import Development from "@/views/development/Development.vue";
+import DevelopmentCreate from "@/views/development/DevelopmentCreate.vue";
 import DevelopmentEdit from "@/views/development/DevelopmentEdit.vue";
 import Developments from "@/views/development/Developments.vue";
 import HeadOfFamilies from "@/views/head-of-family/HeadOfFamilies.vue";
@@ -140,6 +141,15 @@ const router = createRouter({
           meta: {
             requiresAuth: true,
             permission: "development-edit"
+          }
+        },
+        {
+          path: "development/create",
+          name: "create-development",
+          component: DevelopmentCreate,
+          meta: {
+            requiresAuth: true,
+            permission: "development-create"
           }
         }
       ],

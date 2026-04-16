@@ -3,7 +3,6 @@ import { formatRupiah, parseRupiah } from '@/helpers/format';
 import { useDevelopmentStore } from '@/stores/development';
 import { storeToRefs } from 'pinia';
 import { onMounted, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
 import Input from '@/components/ui/Input.vue';
 
 import iconEditSecondaryGreen from '@/assets/images/icons/edit-secondary-green.svg';
@@ -12,10 +11,6 @@ import iconProfileCircleSecondaryGreen from '@/assets/images/icons/profile-circl
 import iconProfileCircleBlack from '@/assets/images/icons/profile-circle-black.svg';
 import iconCalendar2SecondaryGreen from '@/assets/images/icons/calendar-2-secondary-green.svg';
 import iconCalendar2Black from '@/assets/images/icons/calendar-2-black.svg';
-
-
-const route = useRoute()
-const router = useRouter()
 
 const development = ref({
     'thumbnail': null,
@@ -32,19 +27,10 @@ const development = ref({
 
 const developmentStore = useDevelopmentStore();
 const { loading, error, success } = storeToRefs(developmentStore)
-const { fetchDevelopment, updateDevelopment } = developmentStore
-
-const fetchData = async () => {
-    const response = await fetchDevelopment(route.params.id)
-
-    development.value = response
-    development.value.thumbnail_url = response.thumbnail
-    development.value.thumbnail = null
-    development.value.day = Math.round((new Date(development.value.end_date).getTime() - new Date(development.value.start_date).getTime()) / (24 * 60 * 60 * 1000))
-}
+const { createDevelopment } = developmentStore
 
 const handleSubmit = async () => {
-    await updateDevelopment({
+    await createDevelopment({
         ...development.value,
         amount: parseRupiah(development.value.amount)
     })
@@ -57,10 +43,11 @@ watch(() => development.value.amount, (newAmount) => {
 watch(() => development.value.day, (newDay) => {
     development.value.day = newDay;
     development.value.end_date = new Date(new Date(development.value.start_date).getTime() + newDay * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-})
+});
 
-onMounted(fetchData);
 </script>
+
+<!-- LANJUTKAN PADA MENIT 3 -->
 
 <template>
     <div id="Header" class="flex items-center justify-between">
