@@ -48,7 +48,7 @@ const SidebarItems = [
         path: "/development",
       }, {
         label: "Events Desa",
-        path: "/events-desa"
+        path: "/event"
       }
     ],
   }

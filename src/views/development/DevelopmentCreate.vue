@@ -11,18 +11,21 @@ import iconProfileCircleSecondaryGreen from '@/assets/images/icons/profile-circl
 import iconProfileCircleBlack from '@/assets/images/icons/profile-circle-black.svg';
 import iconCalendar2SecondaryGreen from '@/assets/images/icons/calendar-2-secondary-green.svg';
 import iconCalendar2Black from '@/assets/images/icons/calendar-2-black.svg';
+import iconMoneySecondaryGreen from '@/assets/images/icons/money-secondary-green.svg';
+import iconMoneyDarkGreen from '@/assets/images/icons/money-dark-green.svg';
 
 const development = ref({
     'thumbnail': null,
     'thumbnail_url': null,
     'name': null,
+    'amount': null,
     'description': null,
     'person_in_charge': null,
     'day': 0,
     'start_date': null,
     'end_date': null,
     'amount': null,
-    'status': null,
+    'status': 'ongoing',
 });
 
 const developmentStore = useDevelopmentStore();
@@ -40,14 +43,19 @@ watch(() => development.value.amount, (newAmount) => {
     development.value.amount = formatRupiah(newAmount);
 })
 
+const handleImageChange = (event) => {
+    const file = event.target.files[0];
+
+    development.value.thumbnail = file;
+    development.value.thumbnail_url = URL.createObjectURL(file);
+};
+
 watch(() => development.value.day, (newDay) => {
     development.value.day = newDay;
     development.value.end_date = new Date(new Date(development.value.start_date).getTime() + newDay * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 });
 
 </script>
-
-<!-- LANJUTKAN PADA MENIT 3 -->
 
 <template>
     <div id="Header" class="flex items-center justify-between">
@@ -108,10 +116,11 @@ watch(() => development.value.day, (newDay) => {
                         <img id="Photo" :src="development.thumbnail_url" alt="image" class="size-full object-cover" />
                     </div>
                     <div class="relative">
-                        <input id="File" type="file" name="file"
-                            class="absolute opacity-0 left-0 w-full top-0 h-full" />
+                        <input id="File" type="file" name="file" class="absolute opacity-0 left-0 w-full top-0 h-full"
+                            @change="handleImageChange" ref="thumbnail" />
                         <button id="Upload" type="button"
-                            class="relative flex items-center py-4 px-6 rounded-2xl bg-desa-black gap-[10px]">
+                            class="relative flex items-center py-4 px-6 rounded-2xl bg-desa-black gap-[10px]"
+                            @click="$refs.thumbnail.click()">
                             <img src="@/assets/images/icons/send-square-white.svg" alt="icon" class="size-6 shrink-0" />
                             <p class="font-medium leading-5 text-white">Upload</p>
                         </button>
@@ -133,6 +142,15 @@ watch(() => development.value.day, (newDay) => {
                     <Input v-model="development.person_in_charge" type="text" placeholder="Ketik Nama Penanggung Jawab"
                         :error-message="error?.name" :icon="iconProfileCircleSecondaryGreen"
                         :filled-icon="iconProfileCircleBlack" />
+                </div>
+            </section>
+            <hr class="border-desa-background" />
+            <section id="Jumlah-Dana" class="flex items-center justify-between">
+                <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Jumlah Dana</p>
+                <div class="flex flex-col gap-3 flex-1 shrink-0">
+                    <Input v-model="development.amount" type="text" placeholder="Ketik Jumlah Dana"
+                        :error-message="error?.name" :icon="iconMoneySecondaryGreen"
+                        :filled-icon="iconMoneyDarkGreen" />
                 </div>
             </section>
             <hr class="border-desa-background" />
@@ -215,7 +233,7 @@ watch(() => development.value.day, (newDay) => {
             </section>
             <hr class="border-desa-background w-[calc(100%+48px)] -mx-6" />
             <section id="Buttons" class="flex items-center justify-end gap-4">
-                <RouterLink :to="{ name: 'manage-development', params: { id: development.id } }">
+                <RouterLink :to="{ name: 'development' }">
                     <div
                         class="py-[18px] rounded-2xl bg-desa-red w-[180px] text-center flex justify-center font-medium text-white">
                         Batal, Tidak jadi</div>

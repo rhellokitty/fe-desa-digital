@@ -50,6 +50,12 @@ const handleSubmit = async () => {
     })
 }
 
+const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    development.value.thumbnail = file;
+    development.value.thumbnail_url = URL.createObjectURL(file);
+}
+
 watch(() => development.value.amount, (newAmount) => {
     development.value.amount = formatRupiah(newAmount);
 })
@@ -121,10 +127,11 @@ onMounted(fetchData);
                         <img id="Photo" :src="development.thumbnail_url" alt="image" class="size-full object-cover" />
                     </div>
                     <div class="relative">
-                        <input id="File" type="file" name="file"
-                            class="absolute opacity-0 left-0 w-full top-0 h-full" />
+                        <input id="File" type="file" name="file" class="absolute opacity-0 left-0 w-full top-0 h-full"
+                            @change="handleImageChange" ref="thumbnail" />
                         <button id="Upload" type="button"
-                            class="relative flex items-center py-4 px-6 rounded-2xl bg-desa-black gap-[10px]">
+                            class="relative flex items-center py-4 px-6 rounded-2xl bg-desa-black gap-[10px]"
+                            @click="$refs.thumbnail.click()">
                             <img src="@/assets/images/icons/send-square-white.svg" alt="icon" class="size-6 shrink-0" />
                             <p class="font-medium leading-5 text-white">Upload</p>
                         </button>

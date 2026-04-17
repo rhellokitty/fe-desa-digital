@@ -6,6 +6,7 @@ import Development from "@/views/development/Development.vue";
 import DevelopmentCreate from "@/views/development/DevelopmentCreate.vue";
 import DevelopmentEdit from "@/views/development/DevelopmentEdit.vue";
 import Developments from "@/views/development/Developments.vue";
+import Events from "@/views/event/Events.vue";
 import HeadOfFamilies from "@/views/head-of-family/HeadOfFamilies.vue";
 import HeadOfFamily from "@/views/head-of-family/HeadOfFamily.vue";
 import HeadOfFamilyCreate from "@/views/head-of-family/HeadOfFamilyCreate.vue";
@@ -150,6 +151,15 @@ const router = createRouter({
           meta: {
             requiresAuth: true,
             permission: "development-create"
+          }
+        },
+        {
+          path: "event",
+          name: "event",
+          component: Events,
+          meta: {
+            requiresAuth: true,
+            permission: "event-list"
           }
         }
       ],

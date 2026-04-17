@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { formatToClientTimeZone } from '@/helpers/format';
+import ModalDelete from '@/components/ui/ModalDelete.vue';
 
 const route = useRoute()
 const router = useRouter()
@@ -20,9 +21,11 @@ const fetchData = async () => {
     development.value = response
 }
 
+const showModalDelete = ref(false);
+
 async function handleDelete() {
     await deleteDevelopment(route.params.id)
-    router.push({ name: 'social-assistance' })
+    router.push({ name: 'development' })
 }
 
 onMounted(fetchData);
@@ -40,7 +43,8 @@ onMounted(fetchData);
             <h1 class="font-semibold text-2xl">Detail Pembangunan Desa</h1>
         </div>
         <div class="flex items-center gap-3">
-            <button data-modal="Modal-Delete" class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-red">
+            <button data-modal="Modal-Delete" class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-red"
+                @click="showModalDelete = true">
                 <p class="font-medium text-white">Hapus Data</p>
                 <img src="@/assets/images/icons/trash-white.svg" class="flex size-6 shrink-0" alt="icon">
             </button>
@@ -126,7 +130,7 @@ onMounted(fetchData);
                     </div>
                     <div class="flex flex-col gap-1 w-full">
                         <p class="font-semibold text-xl leading-[22.5px] text-desa-dark-green">{{ development.start_date
-                            }}</p>
+                        }}</p>
                         <span class="font-medium text-desa-secondary">
                             Tanggal Pelaksanaan
                         </span>
@@ -135,7 +139,7 @@ onMounted(fetchData);
                 <div class="flex items-center w-full gap-3 justify-end">
                     <div class="flex flex-col gap-1 w-full text-right">
                         <p class="font-semibold text-xl leading-[22.5px] text-desa-dark-green">{{ development.end_date
-                            }}</p>
+                        }}</p>
                         <span class="font-medium text-desa-secondary">
                             Perkiraan Selesai
                         </span>
@@ -231,7 +235,7 @@ onMounted(fetchData);
                                 </div>
                                 <div class="flex flex-col gap-1">
                                     <p class="font-semibold text-lg leading-5 text-desa-black">{{ applicant.user?.name
-                                    }}
+                                        }}
                                     </p>
                                 </div>
                             </div>
@@ -251,4 +255,8 @@ onMounted(fetchData);
             </div>
         </section>
     </div>
+
+    <ModalDelete :show="showModalDelete" title="Hapus Pembangunan Desa?" :loading="loading"
+        @close="showModalDelete = false" @confirm="handleDelete" />
+
 </template>
