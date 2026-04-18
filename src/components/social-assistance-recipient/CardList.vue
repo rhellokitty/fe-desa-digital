@@ -64,7 +64,7 @@ defineProps({
         <div class="flex items-center gap-6 justify-between">
             <div class="flex items-center gap-3 w-[302px] shrink-0">
                 <div class="flex size-[54px] rounded-full bg-desa-foreshadow overflow-hidden">
-                    <img :src="item.head_of_family?.profile_picture" class="w-full h-full object-cover" alt="icon">
+                    <img :src="item.head_of_families?.profile_picture" class="w-full h-full object-cover" alt="icon">
                 </div>
                 <div class="flex flex-col gap-1">
                     <p class="font-semibold text-lg leading-5 text-desa-black">{{ item.head_of_family?.user?.name }}</p>

@@ -22,19 +22,16 @@ defineProps({
                         alt="icon">
                     <p class="font-medium text-sm text-desa-secondary">
                         Registration:
-                        <span class="font-medium text-base text-desa-dark-green" v-if="is_active">
-                            Open
-                        </span>
-                        <span class="font-medium text-base text-desa-dark-green" v-else>
-                            Open
+                        <span class="font-medium text-base text-desa-dark-green">
+                            {{ item.is_active === 0 ? 'Closed' : 'Open' }}
                         </span>
                     </p>
                 </div>
             </div>
-            <a href="kd-event-desa-manage.html"
+            <RouterLink :to="{ name: 'manage-event', params: { id: item.id } }"
                 class="flex items-center shrink-0 gap-[10px] rounded-2xl py-4 px-6 bg-desa-black">
                 <span class="font-medium text-white">Manage</span>
-            </a>
+            </RouterLink>
         </div>
         <hr class="border-desa-background">
         <div class="grid grid-cols-3 gap-3">

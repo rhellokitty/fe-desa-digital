@@ -7,7 +7,6 @@ import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { formatToClientTimeZone } from '@/helpers/format';
 
-
 const route = useRoute()
 const router = useRouter()
 

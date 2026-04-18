@@ -29,7 +29,6 @@ defineProps({
                 </div>
             </div>
             <RouterLink :to="{ name: 'manage-development', params: { id: item.id } }"
-                href="kd-pembangunan-desa-manage.html"
                 class="flex items-center shrink-0 gap-[10px] rounded-2xl py-4 px-6 bg-desa-black">
                 <span class="font-medium text-white">Manage</span>
             </RouterLink>
