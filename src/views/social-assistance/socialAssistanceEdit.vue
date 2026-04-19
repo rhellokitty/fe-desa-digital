@@ -214,7 +214,8 @@ onMounted(fetchData);
                 <div class="flex flex-col gap-3 flex-1 shrink-0">
                     <textarea v-model="socialAssistance.description" name="" id=""
                         placeholder="Jelaskan lebih detail tentang bantuan" rows="6"
-                        class="appearance-none outline-none w-full rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-4 gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300">Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis, ad.
+                        class="appearance-none outline-none w-full rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-4 gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300">
+
                                 </textarea>
                 </div>
             </section>

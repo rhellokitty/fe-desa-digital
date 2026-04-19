@@ -29,6 +29,7 @@ async function handleDelete() {
 }
 
 onMounted(fetchData);
+
 </script>
 
 <template>
@@ -130,7 +131,7 @@ onMounted(fetchData);
                     </div>
                     <div class="flex flex-col gap-1 w-full">
                         <p class="font-semibold text-xl leading-[22.5px] text-desa-dark-green">{{ development.start_date
-                        }}</p>
+                            }}</p>
                         <span class="font-medium text-desa-secondary">
                             Tanggal Pelaksanaan
                         </span>
@@ -139,7 +140,7 @@ onMounted(fetchData);
                 <div class="flex items-center w-full gap-3 justify-end">
                     <div class="flex flex-col gap-1 w-full text-right">
                         <p class="font-semibold text-xl leading-[22.5px] text-desa-dark-green">{{ development.end_date
-                        }}</p>
+                            }}</p>
                         <span class="font-medium text-desa-secondary">
                             Perkiraan Selesai
                         </span>
@@ -235,7 +236,7 @@ onMounted(fetchData);
                                 </div>
                                 <div class="flex flex-col gap-1">
                                     <p class="font-semibold text-lg leading-5 text-desa-black">{{ applicant.user?.name
-                                        }}
+                                    }}
                                     </p>
                                 </div>
                             </div>

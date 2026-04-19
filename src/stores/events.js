@@ -60,7 +60,7 @@ export const useEventStore = defineStore("event", {
                 })
                 this.success = response.data.message
 
-                router.push({ name: 'manage-event', params: { id: payload.id } })
+                router.push({ name: 'event', params: { id: payload.id } })
             } catch (error) {
                 this.error = handleError(error)
             } finally {
