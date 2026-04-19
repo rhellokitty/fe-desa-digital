@@ -1,14 +1,19 @@
 <script setup>
 import SidebarItem from "./SidebarItem.vue";
 
-import iconChartActive from "@/assets/images/icons/chart-square-dark-green.svg";
 import iconChartInactive from "@/assets/images/icons/chart-square-secondary-green.svg";
+import iconChartActive from "@/assets/images/icons/chart-square-dark-green.svg";
+
 import iconCrownActive from "@/assets/images/icons/crown-dark-green.svg";
 import iconCrownInactive from "@/assets/images/icons/crown-secondary-green.svg";
-import iconBagActive from "@/assets/images/icons/bag-2-secondary-green.svg";
-import iconBagInactive from "@/assets/images/icons/bag-2-dark-green.svg";
+
+import iconBagInactive from "@/assets/images/icons/bag-2-secondary-green.svg";
+import iconBagActive from "@/assets/images/icons/bag-2-dark-green.svg";
+
 import iconCalendarActive from "@/assets/images/icons/calendar-2-dark-green.svg";
 import iconCalendarInactive from "@/assets/images/icons/calendar-2-secondary-green.svg";
+import iconBuildingActive from "@/assets/images/icons/building-4-secondary-green.svg";
+import iconBuildingInactive from "@/assets/images/icons/building-4-dark-green.svg";
 
 const SidebarItems = [
   {
@@ -51,6 +56,11 @@ const SidebarItems = [
         path: "/event"
       }
     ],
+  }, {
+    label: "Profile Desa",
+    path: "/profile",
+    iconActive: iconBuildingActive,
+    iconInactive: iconBuildingInactive,
   }
 ];
 </script>

@@ -10,11 +10,18 @@ const props = defineProps({
 })
 
 const route = useRoute()
-const isActive = computed(() => route.path === props.item.path)
+
+const isActive = computed(() => {
+    if (props.item.path === '/') return route.path === '/'
+    if (props.item.path === '') return false
+
+    const nextChar = route.path[props.item.path.length]
+    return route.path.startsWith(props.item.path) && (nextChar === '/' || nextChar === undefined)
+})
 
 const isChildActive = computed(() => {
     if (props.item.children) {
-        return props.item.children.some((child) => route.path === child.path)
+        return props.item.children.some((child) => route.path.startsWith(child.path))
     }
     return false
 })
@@ -66,17 +73,22 @@ watch(isChildActive, () => {
                 </span>
                 <div class="relative flex size-6 shrink-0">
                     <img src="@/assets/images/icons/arrow-circle-dark-green-up.svg"
-                        class="absolute flex size-6 shrink-0 opacity-0 group-[.active]:opacity-100 transition-setup"
-                        alt="icon" v-if="isOpen">
+                        class="absolute flex size-6 shrink-0 transition-setup"
+                        :class="isOpen ? 'opacity-100' : 'opacity-0'" alt="icon">
                     <img src="@/assets/images/icons/arrow-circle-secondary-green-down.svg"
-                        class="absolute flex size-6 shrink-0 opacity-100 group-[.active]:opacity-0 transition-setup"
-                        alt="icon" v-else>
+                        class="absolute flex size-6 shrink-0 transition-setup"
+                        :class="isOpen ? 'opacity-0' : 'opacity-100'" alt="icon">
                 </div>
             </button>
 
-            <ul :id="`accordion-${item.label}`" class="flex flex-col flex-1r pl-[28px]" :class="{ hidden: !isOpen }">
-                <SidebarItem v-for="child in item.children" :key="child.label" :item="child" />
-            </ul>
+            <Transition enter-active-class="transition-all duration-300 overflow-hidden"
+                enter-from-class="max-h-0 opacity-0" enter-to-class="max-h-96 opacity-100"
+                leave-active-class="transition-all duration-300 overflow-hidden" leave-from-class="max-h-96 opacity-100"
+                leave-to-class="max-h-0 opacity-0">
+                <ul v-if="isOpen" :id="`accordion-${item.label}`" class="flex flex-col flex-1r pl-[28px]">
+                    <SidebarItem v-for="child in item.children" :key="child.label" :item="child" />
+                </ul>
+            </Transition>
         </div>
     </template>
 </template>
