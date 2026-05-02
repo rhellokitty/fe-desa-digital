@@ -1,6 +1,130 @@
 <script setup>
+import { useProfileStore } from '@/stores/profile';
+import { storeToRefs } from 'pinia';
+import { onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
 
+const route = useRoute()
+const profileStore = useProfileStore()
+const { loading } = storeToRefs(profileStore)
+const { fetchProfile, updateProfile } = profileStore
 
+const thumbnailInput = ref(null)
+const profile = ref({
+    id: route.params.id ?? null,
+    thumbnail: null,
+    thumbnail_url: null,
+    name: '',
+    address: '',
+    about: '',
+    headman: '',
+    people: '',
+    agriculutral_area: '',
+    total_area: '',
+    images: [],
+    deleted_images: []
+})
+
+const imageRefs = ref([])
+
+const fetchData = async () => {
+    const response = await fetchProfile()
+
+    if (!response) return
+
+    profile.value = {
+        id: response.id ?? route.params.id ?? null,
+        thumbnail: null,
+        thumbnail_url: response.thumbnail ?? null,
+        name: response.name ?? '',
+        address: response.address ?? '',
+        about: response.about ?? '',
+        headman: response.headman ?? '',
+        people: response.people ?? '',
+        agriculutral_area: response.agriculutral_area ?? '',
+        total_area: response.total_area ?? '',
+        images: (response.profile_images ?? []).map((image) => ({
+            id: image.id ?? null,
+            image: null,
+            image_url: image.image ?? null,
+            existing: true
+        })),
+        deleted_images: []
+    }
+}
+
+const handleSubmit = async () => {
+    const formData = new FormData()
+
+    formData.append('name', profile.value.name ?? '')
+    formData.append('address', profile.value.address ?? '')
+    formData.append('about', profile.value.about ?? '')
+    formData.append('headman', profile.value.headman ?? '')
+    formData.append('people', profile.value.people ?? '')
+    formData.append('agriculutral_area', profile.value.agriculutral_area ?? '')
+    formData.append('total_area', profile.value.total_area ?? '')
+
+    if (profile.value.thumbnail instanceof File) {
+        formData.append('thumbnail', profile.value.thumbnail)
+    }
+
+    profile.value.images.forEach((image) => {
+        if (image.image instanceof File) {
+            formData.append('images[]', image.image)
+        }
+    })
+
+    profile.value.deleted_images.forEach((id) => {
+        formData.append('deleted_images[]', id)
+    })
+
+    await updateProfile({
+        id: profile.value.id,
+        formData
+    })
+}
+
+const addImage = () => {
+    profile.value.images.push({
+        image: null,
+        image_url: null,
+        existing: false
+    })
+}
+
+const removeImage = (index) => {
+    const image = profile.value.images[index]
+
+    if (image?.existing && image?.id) {
+        profile.value.deleted_images.push(image.id)
+    }
+
+    profile.value.images.splice(index, 1)
+}
+
+const handleFileChange = (index, event) => {
+    const file = event.target.files?.[0]
+
+    if (!file) return
+
+    profile.value.images[index] = {
+        ...profile.value.images[index],
+        image: file,
+        image_url: URL.createObjectURL(file),
+        existing: false
+    }
+}
+
+const handleImageChange = (event) => {
+    const file = event.target.files?.[0]
+
+    if (!file) return
+
+    profile.value.thumbnail = file
+    profile.value.thumbnail_url = URL.createObjectURL(file)
+}
+
+onMounted(fetchData);
 </script>
 
 <template>
@@ -15,7 +139,7 @@
             <h1 class="font-semibold text-2xl">Edit Profile Desa</h1>
         </div>
     </div>
-    <form action="kd-bantuan-sosial.html" id="myForm" class="capitalize">
+    <form @submit.prevent="handleSubmit" id="myForm" class="capitalize">
         <div class="shrink-0 rounded-3xl p-6 bg-white flex flex-col gap-6 h-fit">
             <section id="Photos" class="flex justify-between">
                 <h2
@@ -25,48 +149,50 @@
                     <div class="photo-form group/parent flex items-center justify-between">
                         <div
                             class="Photo-Preview flex itce justify-center w-[120px] h-[100px] rounded-2xl overflow-hidden bg-desa-foreshadow">
-                            <img class="Photo size-full object-cover"
-                                src="@/assets/images/thumbnails/thumbnail-bansos-preview.svg" alt="image" />
+                            <img class="Photo size-full object-cover" :src="profile.thumbnail_url" alt="image" />
                         </div>
                         <div class="relative">
-                            <input required type="file" name=""
-                                class="photo-input absolute opacity-0 left-0 top-0 size-0 -z-10" />
+                            <input type="file" name="file"
+                                class="photo-input absolute opacity-0 left-0 top-0 size-0 -z-10"
+                                @change="handleImageChange" ref="thumbnailInput" />
                             <div class="action flex gap-3">
                                 <button type="button"
-                                    class="Upload-btn relative flex items-center py-4 px-6 rounded-2xl bg-desa-black gap-[10px]">
+                                    class="Upload-btn relative flex items-center py-4 px-6 rounded-2xl bg-desa-black gap-[10px]"
+                                    @click="thumbnailInput?.click()">
                                     <img src="@/assets/images/icons/send-square-white.svg" alt="icon"
                                         class="size-6 shrink-0" />
                                     <p class="font-medium leading-5 text-white">Upload</p>
                                 </button>
                                 <button type="button"
-                                    class="delete size-14 rounded-2xl p-4 bg-desa-red items-center hidden justify-center group-[&.new]/parent:flex"
-                                    onclick="deletePhotoForm(this)">
+                                    class="delete size-14 rounded-2xl p-4 bg-desa-red items-center hidden justify-center group-[&.new]/parent:flex">
                                     <img src="@/assets/images/icons/trash-white.svg" class="flex size-6 shrink-0"
                                         alt="icon">
                                 </button>
                             </div>
                         </div>
                     </div>
-                    <!-- add .new class on photo-form to show delete button -->
-                    <div class="photo-form group/parent flex items-center justify-between new">
+                    <div v-for="(image, index) in profile.images" :key="index"
+                        class="photo-form group/parent flex items-center justify-between"
+                        :class="{ new: true }">
                         <div
                             class="Photo-Preview flex itce justify-center w-[120px] h-[100px] rounded-2xl overflow-hidden bg-desa-foreshadow">
-                            <img class="Photo size-full object-cover"
-                                src="@/assets/images/thumbnails/thumbnail-bansos-preview.svg" alt="image" />
+                            <img class="Photo size-full object-cover" :src="image.image_url" alt="image" />
                         </div>
                         <div class="relative">
-                            <input required type="file" name=""
-                                class="photo-input absolute opacity-0 left-0 top-0 size-0 -z-10" />
+                            <input :ref="el => { if (el) imageRefs[index] = el }" type="file" name="file"
+                                class="photo-input absolute opacity-0 left-0 top-0 size-0 -z-10"
+                                @change="event => handleFileChange(index, event)" />
                             <div class="action flex gap-3">
                                 <button type="button"
-                                    class="Upload-btn relative flex items-center py-4 px-6 rounded-2xl bg-desa-black gap-[10px]">
+                                    class="Upload-btn relative flex items-center py-4 px-6 rounded-2xl bg-desa-black gap-[10px]"
+                                    @click="imageRefs[index]?.click()">
                                     <img src="@/assets/images/icons/send-square-white.svg" alt="icon"
                                         class="size-6 shrink-0" />
                                     <p class="font-medium leading-5 text-white">Upload</p>
                                 </button>
                                 <button type="button"
                                     class="delete size-14 rounded-2xl p-4 bg-desa-red items-center hidden justify-center group-[&.new]/parent:flex"
-                                    onclick="deletePhotoForm(this)">
+                                    @click="removeImage(index)">
                                     <img src="@/assets/images/icons/trash-white.svg" class="flex size-6 shrink-0"
                                         alt="icon">
                                 </button>
@@ -74,6 +200,7 @@
                         </div>
                     </div>
                     <button type="button"
+                        @click="addImage"
                         class="add-more-btn flex items-center w-full justify-center rounded-2xl py-4 px-6 gap-3 bg-desa-foreshadow">
                         <p class="font-medium leading-5 text-desa-dark-green">Tambah Gambar Desa</p>
                         <img src="@/assets/images/icons/add-square-dark-green.svg" class="flex size-6 shrink-0"
@@ -86,7 +213,7 @@
                 <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Nama Desa</p>
                 <div class="flex flex-col gap-3 flex-1 shrink-0">
                     <label class="relative group peer w-full">
-                        <input type="text" placeholder="Ketik nama desa"
+                        <input v-model="profile.name" type="text" placeholder="Ketik nama desa"
                             class="appearance-none outline-none w-full h-14 rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-12 gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300">
                         <div class="absolute transform -translate-y-1/2 top-1/2 left-4 flex size-6 shrink-0">
                             <img src="@/assets/images/icons/building-4-secondary-green.svg"
@@ -98,19 +225,19 @@
                 </div>
             </section>
             <hr class="border-desa-background" />
-            <section id="Lokasi" class="flex items-center justify-between">
+            <!-- <section id="Lokasi" class="flex items-center justify-between">
                 <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Lokasi Desa</p>
                 <div class="flex flex-col gap-3 flex-1 shrink-0">
-                    <textarea name="" id="" placeholder="Ketik alamat desa" rows="6"
+                    <textarea v-model="profile.about" name="" id="" placeholder="Ketik alamat desa" rows="6"
                         class="appearance-none outline-none w-full rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-4 gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300"></textarea>
                 </div>
-            </section>
+            </section> -->
             <hr class="border-desa-background" />
             <section id="Kepala-Desa" class="flex items-center justify-between">
                 <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Nama Kepala Desa</p>
                 <div class="flex flex-col gap-3 flex-1 shrink-0">
                     <label class="relative group peer w-full">
-                        <input type="text" placeholder="Pilih Kepala Desa"
+                        <input v-model="profile.headman" type="text" placeholder="Pilih Kepala Desa"
                             class="appearance-none outline-none w-full h-14 rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-12 gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300">
                         <div class="absolute transform -translate-y-1/2 top-1/2 left-4 flex size-6 shrink-0">
                             <img src="@/assets/images/icons/user-square-secondary-green.svg"
@@ -126,7 +253,7 @@
                 <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Luas Pertanian Desa</p>
                 <div class="flex flex-col gap-3 flex-1 shrink-0">
                     <label class="relative group peer w-full">
-                        <input type="number" placeholder="Masukan total luas pertanian"
+                        <input v-model="profile.agriculutral_area" type="number" placeholder="Masukan total luas pertanian"
                             class="appearance-none outline-none w-full h-14 rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-12 pr-[98px] gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300">
                         <div class="absolute transform -translate-y-1/2 top-1/2 left-4 flex size-6 shrink-0">
                             <img src="@/assets/images/icons/tree-secondary-green.svg"
@@ -147,7 +274,7 @@
                 <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Luas Area Desa</p>
                 <div class="flex flex-col gap-3 flex-1 shrink-0">
                     <label class="relative group peer w-full">
-                        <input type="number" placeholder="Masukan total luas area"
+                        <input v-model="profile.total_area" type="number" placeholder="Masukan total luas area"
                             class="appearance-none outline-none w-full h-14 rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-12 pr-[98px] gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300">
                         <div class="absolute transform -translate-y-1/2 top-1/2 left-4 flex size-6 shrink-0">
                             <img src="@/assets/images/icons/grid-5-secondary-green.svg"
@@ -168,7 +295,7 @@
                 <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Jumlah Penduduk Desa</p>
                 <div class="flex flex-col gap-3 flex-1 shrink-0">
                     <label class="relative group peer w-full">
-                        <input type="number" placeholder="Masukan total penduduk desa"
+                        <input v-model="profile.people" type="number" placeholder="Masukan total penduduk desa"
                             class="appearance-none outline-none w-full h-14 rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-12 gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300">
                         <div class="absolute transform -translate-y-1/2 top-1/2 left-4 flex size-6 shrink-0">
                             <img src="@/assets/images/icons/profile-2user-secondary-green.svg"
@@ -183,18 +310,18 @@
             <section id="Deskripsi" class="flex items-center justify-between">
                 <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Deskripsi Tentang Desa</p>
                 <div class="flex flex-col gap-3 flex-1 shrink-0">
-                    <textarea name="" id="" placeholder="Jelaskan lebih detail tentang desa terkait" rows="6"
+                    <textarea v-model="profile.about" name="" id="" placeholder="Jelaskan lebih detail tentang desa terkait" rows="6"
                         class="appearance-none outline-none w-full rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-4 gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300"></textarea>
                 </div>
             </section>
             <hr class="border-desa-background w-[calc(100%+48px)] -mx-6" />
             <section id="Buttons" class="flex items-center justify-end gap-4">
-                <a href="kd-event-desa.html">
+                <RouterLink :to="{ name: 'profile' }">
                     <div
                         class="py-[18px] rounded-2xl bg-desa-red w-[180px] text-center flex justify-center font-medium text-white">
                         Batal, Tidak jadi</div>
-                </a>
-                <button disabled id="submitButton" type="submit"
+                </RouterLink>
+                <button :disabled="loading" id="submitButton" type="submit"
                     class="py-[18px] rounded-2xl disabled:bg-desa-grey w-[180px] text-center flex justify-center font-medium text-white bg-desa-dark-green transition-all duration-300">Save
                     Changes</button>
             </section>

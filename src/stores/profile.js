@@ -21,7 +21,7 @@ export const useProfileStore = defineStore("profile", {
             this.loading = true
 
             try {
-                const response = await axiosInstance.get(id ? `profile/${id}` : 'profile')
+                const response = await axiosInstance.get('profile')
 
                 this.profile = response.data.data
                 return response.data.data
@@ -55,9 +55,12 @@ export const useProfileStore = defineStore("profile", {
             this.error = null
 
             try {
-                const response = await axiosInstance.post(`profile/${payload.id}`, {
-                    ...payload,
-                    _method: 'PUT'
+                payload.formData.append('_method', 'PUT')
+
+                const response = await axiosInstance.post(`profile/${payload.id}`, payload.formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
                 })
 
                 this.profile = response.data.data ?? this.profile

@@ -7,6 +7,7 @@ const profile = ref({
     thumbnail: null,
     name: null,
     about: null,
+    address: null,
     headman: null,
     people: null,
     agriculutral_area: null,
@@ -18,7 +19,6 @@ const profileStore = useProfileStore()
 const { loading, success } = storeToRefs(profileStore)
 const { createProfile } = profileStore
 
-// SESUDAH
 const handleSubmit = async () => {
     const formData = new FormData()
 
@@ -158,14 +158,6 @@ const handleImageChange = (event) => {
                 </div>
             </section>
             <hr class="border-desa-background" />
-            <section id="Lokasi" class="flex items-center justify-between">
-                <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Lokasi Desa</p>
-                <div class="flex flex-col gap-3 flex-1 shrink-0">
-                    <textarea v-model="profile.about" name="" id="" placeholder="Ketik alamat desa" rows="6"
-                        class="appearance-none outline-none w-full rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-4 gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300"></textarea>
-                </div>
-            </section>
-            <hr class="border-desa-background" />
             <section id="Kepala-Desa" class="flex items-center justify-between">
                 <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Nama Kepala Desa</p>
                 <div class="flex flex-col gap-3 flex-1 shrink-0">
@@ -244,11 +236,20 @@ const handleImageChange = (event) => {
             <section id="Deskripsi" class="flex items-center justify-between">
                 <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Deskripsi Tentang Desa</p>
                 <div class="flex flex-col gap-3 flex-1 shrink-0">
-                    <textarea name="" id="" placeholder="Jelaskan lebih detail tentang desa terkait" rows="6"
+                    <textarea v-model="profile.about" name="" id=""
+                        placeholder="Jelaskan lebih detail tentang desa terkait" rows="6"
                         class="appearance-none outline-none w-full rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-4 gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300"></textarea>
                 </div>
             </section>
-            <hr class="border-desa-background w-[calc(100%+48px)] -mx-6" />
+            <!-- <hr class="border-desa-background w-[calc(100%+48px)] -mx-6" /> -->
+            <hr class="border-desa-background" />
+            <section id="Lokasi" class="flex items-center justify-between">
+                <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Lokasi Desa</p>
+                <div class="flex flex-col gap-3 flex-1 shrink-0">
+                    <textarea v-model="profile.address" name="" id="" placeholder="Ketik alamat desa" rows="6"
+                        class="appearance-none outline-none w-full rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-4 gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300"></textarea>
+                </div>
+            </section>
             <section id="Buttons" class="flex items-center justify-end gap-4">
                 <RouterLink :to="{ name: 'profile' }">
                     <div

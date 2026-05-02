@@ -1,4 +1,3 @@
-=
 <script setup>
 import { formatDate, formatDateTime } from '@/helpers/format';
 import { useProfileStore } from '@/stores/profile';
@@ -107,8 +106,7 @@ onMounted(fetchProfile);
                                 src="https://www.google.com/maps/embed/v1/place?q=Kelurahan+Sukajaya&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8"></iframe>
                         </div>
                     </div>
-                    <p class="font-medium text-sm leading-[28px] text-desa-secondary"> Jl. Mawar No. 45, RT
-                        02/RW 03, Kelurahan Sukajaya, Kecamatan Sukarame, Kota Jakarta, Jawa Barat, 40286</p>
+                    <p class="font-medium text-sm leading-[28px] text-desa-secondary">{{ profile.address }}</p>
                 </div>
             </section>
             <section id="Detail-Desa" class="flex flex-col flex-1 h-fit shrink-0 rounded-3xl p-6 gap-6 bg-white">
@@ -116,11 +114,10 @@ onMounted(fetchProfile);
                 <div class="flex flex-col gap-[14px]">
                     <div class="flex items-center gap-3 w-[302px] shrink-0">
                         <div class="flex size-[54px] rounded-full bg-desa-foreshadow overflow-hidden">
-                            <img src="@/assets/images/photos/kk-photo-1.png" class="w-full h-full object-cover"
-                                alt="icon">
+                            <img :src="profile.thumbnail" class="w-full h-full object-cover" alt="icon">
                         </div>
                         <div class="flex flex-col gap-1">
-                            <p class="font-semibold text-lg leading-5 text-desa-black">Bimore Wecaksono</p>
+                            <p class="font-semibold text-lg leading-5 text-desa-black">{{ profile.headman }}</p>
                             <p class="flex items-center gap-1">
                                 <span class="font-medium text-sm text-desa-secondary">Kepala Desa</span>
                             </p>
