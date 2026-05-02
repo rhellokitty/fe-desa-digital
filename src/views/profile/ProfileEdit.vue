@@ -1,64 +1,5 @@
 <script setup>
-import { useProfileStore } from '@/stores/profile';
-import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
 
-const profile = ref({
-    thumbnail: null,
-    name: null,
-    about: null,
-    headman: null,
-    people: null,
-    agriculutral_area: null,
-    total_area: null,
-    images: []
-})
-
-const profileStore = useProfileStore()
-const { loading, success } = storeToRefs(profileStore)
-const { createProfile } = profileStore
-
-// SESUDAH
-const handleSubmit = async () => {
-    const formData = new FormData()
-
-    Object.entries(profile.value).forEach(([key, value]) => {
-        if (key === 'images' || key === 'thumbnail_url') return
-        if (value !== null) formData.append(key, value)
-    })
-
-    profile.value.images.forEach((image) => {
-        if (image.image) {
-            formData.append('images[]', image.image) // ganti ke 'profile_images[]' kalau backend expect itu
-        }
-    })
-
-    await createProfile(formData)
-}
-
-const addImage = () => {
-    profile.value.images.push({
-        image: null,
-        image_url: null
-    })
-}
-
-const imageRefs = ref([])
-
-const removeImage = (index) => {
-    profile.value.images.splice(index, 1)
-}
-
-const handleFileChange = (index, event) => {
-    profile.value.images[index].image = event.target.files[0]
-    profile.value.images[index].image_url = URL.createObjectURL(event.target.files[0])
-}
-
-const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    profile.value.thumbnail = file;
-    profile.value.thumbnail_url = URL.createObjectURL(file);
-};
 
 </script>
 
@@ -68,13 +9,13 @@ const handleImageChange = (event) => {
             <div class="flex gap-1 items-center leading-5 text-desa-secondary">
                 <p class="last-of-type:text-desa-dark-green last-of-type:font-semibold capitalize ">Profile Desa</p>
                 <span>/</span>
-                <p class="last-of-type:text-desa-dark-green last-of-type:font-semibold capitalize ">Create Profile Desa
+                <p class="last-of-type:text-desa-dark-green last-of-type:font-semibold capitalize ">Edit Profile Desa
                 </p>
             </div>
-            <h1 class="font-semibold text-2xl">Create Profile Desa</h1>
+            <h1 class="font-semibold text-2xl">Edit Profile Desa</h1>
         </div>
     </div>
-    <form @submit.prevent="handleSubmit" id="myForm" class="capitalize">
+    <form action="kd-bantuan-sosial.html" id="myForm" class="capitalize">
         <div class="shrink-0 rounded-3xl p-6 bg-white flex flex-col gap-6 h-fit">
             <section id="Photos" class="flex justify-between">
                 <h2
@@ -84,16 +25,15 @@ const handleImageChange = (event) => {
                     <div class="photo-form group/parent flex items-center justify-between">
                         <div
                             class="Photo-Preview flex itce justify-center w-[120px] h-[100px] rounded-2xl overflow-hidden bg-desa-foreshadow">
-                            <img id="Photo" :src="profile.thumbnail_url" class="size-full object-cover" alt="image" />
+                            <img class="Photo size-full object-cover"
+                                src="@/assets/images/thumbnails/thumbnail-bansos-preview.svg" alt="image" />
                         </div>
                         <div class="relative">
-                            <input id="File" type="file" name="file"
-                                class="photo-input absolute opacity-0 left-0 top-0 size-0 -z-10"
-                                @change="handleImageChange" ref="thumbnail" />
+                            <input required type="file" name=""
+                                class="photo-input absolute opacity-0 left-0 top-0 size-0 -z-10" />
                             <div class="action flex gap-3">
                                 <button type="button"
-                                    class="Upload-btn relative flex items-center py-4 px-6 rounded-2xl bg-desa-black gap-[10px]"
-                                    @click="$refs.thumbnail.click()">
+                                    class="Upload-btn relative flex items-center py-4 px-6 rounded-2xl bg-desa-black gap-[10px]">
                                     <img src="@/assets/images/icons/send-square-white.svg" alt="icon"
                                         class="size-6 shrink-0" />
                                     <p class="font-medium leading-5 text-white">Upload</p>
@@ -107,38 +47,38 @@ const handleImageChange = (event) => {
                             </div>
                         </div>
                     </div>
-                    <button @click="addImage" type="button"
-                        class="add-more-btn flex items-center w-full justify-center rounded-2xl py-4 px-6 gap-3 bg-desa-foreshadow">
-                        <p class="font-medium leading-5 text-desa-dark-green">Tambah Gambar Desa</p>
-                        <img src="@/assets/images/icons/add-square-dark-green.svg" class="flex size-6 shrink-0"
-                            alt="icon">
-                    </button>
-                    <div v-for="(image, index) in profile.images" :key="index"
-                        class="photo-form group/parent flex items-center justify-between">
+                    <!-- add .new class on photo-form to show delete button -->
+                    <div class="photo-form group/parent flex items-center justify-between new">
                         <div
                             class="Photo-Preview flex itce justify-center w-[120px] h-[100px] rounded-2xl overflow-hidden bg-desa-foreshadow">
-                            <img :src="image.image_url" class="size-full object-cover" alt="image" />
+                            <img class="Photo size-full object-cover"
+                                src="@/assets/images/thumbnails/thumbnail-bansos-preview.svg" alt="image" />
                         </div>
                         <div class="relative">
-                            <input :ref="el => { if (el) imageRefs[index] = el }"
-                                @change="e => handleFileChange(index, e)" type="file" name="file"
+                            <input required type="file" name=""
                                 class="photo-input absolute opacity-0 left-0 top-0 size-0 -z-10" />
                             <div class="action flex gap-3">
-                                <button @click="imageRefs[index].click()" type="button"
+                                <button type="button"
                                     class="Upload-btn relative flex items-center py-4 px-6 rounded-2xl bg-desa-black gap-[10px]">
                                     <img src="@/assets/images/icons/send-square-white.svg" alt="icon"
                                         class="size-6 shrink-0" />
                                     <p class="font-medium leading-5 text-white">Upload</p>
                                 </button>
                                 <button type="button"
-                                    class="delete size-14 rounded-2xl p-4 bg-desa-red items-center flex justify-center"
-                                    @click="removeImage(index)">
+                                    class="delete size-14 rounded-2xl p-4 bg-desa-red items-center hidden justify-center group-[&.new]/parent:flex"
+                                    onclick="deletePhotoForm(this)">
                                     <img src="@/assets/images/icons/trash-white.svg" class="flex size-6 shrink-0"
                                         alt="icon">
                                 </button>
                             </div>
                         </div>
                     </div>
+                    <button type="button"
+                        class="add-more-btn flex items-center w-full justify-center rounded-2xl py-4 px-6 gap-3 bg-desa-foreshadow">
+                        <p class="font-medium leading-5 text-desa-dark-green">Tambah Gambar Desa</p>
+                        <img src="@/assets/images/icons/add-square-dark-green.svg" class="flex size-6 shrink-0"
+                            alt="icon">
+                    </button>
                 </div>
             </section>
             <hr class="border-desa-background" />
@@ -146,7 +86,7 @@ const handleImageChange = (event) => {
                 <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Nama Desa</p>
                 <div class="flex flex-col gap-3 flex-1 shrink-0">
                     <label class="relative group peer w-full">
-                        <input v-model="profile.name" type="text" placeholder="Ketik nama desa"
+                        <input type="text" placeholder="Ketik nama desa"
                             class="appearance-none outline-none w-full h-14 rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-12 gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300">
                         <div class="absolute transform -translate-y-1/2 top-1/2 left-4 flex size-6 shrink-0">
                             <img src="@/assets/images/icons/building-4-secondary-green.svg"
@@ -161,7 +101,7 @@ const handleImageChange = (event) => {
             <section id="Lokasi" class="flex items-center justify-between">
                 <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Lokasi Desa</p>
                 <div class="flex flex-col gap-3 flex-1 shrink-0">
-                    <textarea v-model="profile.about" name="" id="" placeholder="Ketik alamat desa" rows="6"
+                    <textarea name="" id="" placeholder="Ketik alamat desa" rows="6"
                         class="appearance-none outline-none w-full rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-4 gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300"></textarea>
                 </div>
             </section>
@@ -170,7 +110,7 @@ const handleImageChange = (event) => {
                 <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Nama Kepala Desa</p>
                 <div class="flex flex-col gap-3 flex-1 shrink-0">
                     <label class="relative group peer w-full">
-                        <input v-model="profile.headman" type="text" placeholder="Pilih Kepala Desa"
+                        <input type="text" placeholder="Pilih Kepala Desa"
                             class="appearance-none outline-none w-full h-14 rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-12 gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300">
                         <div class="absolute transform -translate-y-1/2 top-1/2 left-4 flex size-6 shrink-0">
                             <img src="@/assets/images/icons/user-square-secondary-green.svg"
@@ -186,8 +126,7 @@ const handleImageChange = (event) => {
                 <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Luas Pertanian Desa</p>
                 <div class="flex flex-col gap-3 flex-1 shrink-0">
                     <label class="relative group peer w-full">
-                        <input v-model="profile.agriculutral_area" type="number"
-                            placeholder="Masukan total luas pertanian"
+                        <input type="number" placeholder="Masukan total luas pertanian"
                             class="appearance-none outline-none w-full h-14 rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-12 pr-[98px] gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300">
                         <div class="absolute transform -translate-y-1/2 top-1/2 left-4 flex size-6 shrink-0">
                             <img src="@/assets/images/icons/tree-secondary-green.svg"
@@ -208,7 +147,7 @@ const handleImageChange = (event) => {
                 <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Luas Area Desa</p>
                 <div class="flex flex-col gap-3 flex-1 shrink-0">
                     <label class="relative group peer w-full">
-                        <input v-model="profile.total_area" type="number" placeholder="Masukan total luas area"
+                        <input type="number" placeholder="Masukan total luas area"
                             class="appearance-none outline-none w-full h-14 rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-12 pr-[98px] gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300">
                         <div class="absolute transform -translate-y-1/2 top-1/2 left-4 flex size-6 shrink-0">
                             <img src="@/assets/images/icons/grid-5-secondary-green.svg"
@@ -229,7 +168,7 @@ const handleImageChange = (event) => {
                 <p class="font-medium leading-5 text-desa-secondary w-[calc(424/904*100%)]">Jumlah Penduduk Desa</p>
                 <div class="flex flex-col gap-3 flex-1 shrink-0">
                     <label class="relative group peer w-full">
-                        <input v-model="profile.people" type="number" placeholder="Masukan total penduduk desa"
+                        <input type="number" placeholder="Masukan total penduduk desa"
                             class="appearance-none outline-none w-full h-14 rounded-2xl ring-[1.5px] ring-desa-background focus:ring-desa-black py-4 px-12 gap-2 font-medium placeholder:text-desa-secondary transition-all duration-300">
                         <div class="absolute transform -translate-y-1/2 top-1/2 left-4 flex size-6 shrink-0">
                             <img src="@/assets/images/icons/profile-2user-secondary-green.svg"
@@ -250,14 +189,14 @@ const handleImageChange = (event) => {
             </section>
             <hr class="border-desa-background w-[calc(100%+48px)] -mx-6" />
             <section id="Buttons" class="flex items-center justify-end gap-4">
-                <RouterLink :to="{ name: 'profile' }">
+                <a href="kd-event-desa.html">
                     <div
                         class="py-[18px] rounded-2xl bg-desa-red w-[180px] text-center flex justify-center font-medium text-white">
                         Batal, Tidak jadi</div>
-                </RouterLink>
-                <button id="submitButton" :disabled="loading.value"
-                    class="py-[18px] rounded-2xl disabled:bg-desa-grey w-[180px] text-center flex justify-center font-medium text-white bg-desa-dark-green transition-all duration-300">Create
-                    Now</button>
+                </a>
+                <button disabled id="submitButton" type="submit"
+                    class="py-[18px] rounded-2xl disabled:bg-desa-grey w-[180px] text-center flex justify-center font-medium text-white bg-desa-dark-green transition-all duration-300">Save
+                    Changes</button>
             </section>
         </div>
     </form>

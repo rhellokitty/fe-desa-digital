@@ -1,11 +1,25 @@
+=
 <script setup>
+import { formatDate, formatDateTime } from '@/helpers/format';
 import { useProfileStore } from '@/stores/profile';
 import { storeToRefs } from 'pinia';
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const profileStore = useProfileStore()
 const { profile, success } = storeToRefs(profileStore)
 const { fetchProfile } = profileStore
+
+const showModalImage = ref(false)
+const selectedIndex = ref(0)
+
+const selectImage = (index) => {
+    selectedIndex.value = index
+    showModalImage.value = true
+}
+
+const closeModal = () => {
+    showModalImage.value = false
+}
 
 onMounted(fetchProfile);
 
@@ -30,16 +44,16 @@ onMounted(fetchProfile);
         </div>
     </div>
 
-    <div v-else>
+    <template v-else>
         <div id="Header" class="flex items-center justify-between">
             <div class="flex flex-col gap-2">
                 <h1 class="font-semibold text-2xl">Profile Desa</h1>
             </div>
-            <a href="kd-profile-desa-edit.html"
+            <RouterLink :to="{ name: 'edit-profile', params: { id: profile.id } }"
                 class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-black">
                 <p class="font-medium text-white">Ubah Data</p>
                 <img src="@/assets/images/icons/edit-white.svg" class="flex size-6 shrink-0" alt="icon">
-            </a>
+            </RouterLink>
         </div>
         <div class="flex gap-[14px]">
             <section id="Nama-Desa"
@@ -50,7 +64,7 @@ onMounted(fetchProfile);
                         alt="icon">
                 </div>
                 <div id="Nama-Desa" class="flex flex-col gap-[6px]">
-                    <h1 class="font-bold text-[32px] leading-10">Desa Angga Countryside</h1>
+                    <h1 class="font-bold text-[32px] leading-10">{{ profile.name }}</h1>
                     <div class="flex items-center gap-0.5">
                         <img src="@/assets/images/icons/location-secondary-green.svg" class="flex size-6 shrink-0"
                             alt="icon">
@@ -61,48 +75,29 @@ onMounted(fetchProfile);
                     <div data-modal="Modal-Gallery" data-gallery="@/assets/images/thumbnails/desa-gallery-1.png"
                         id="Thumbnail-Desa"
                         class="flex w-[492px] h-[300px] shrink-0 rounded-3xl bg-desa-background overflow-hidden">
-                        <img src="@/assets/images/thumbnails/desa-gallery-1.png" class="w-full h-full object-cover"
-                            alt="thumbnail">
+                        <img :src="profile.thumbnail" class="w-full h-full object-cover" alt="thumbnail">
                     </div>
                     <div class="grid grid-cols-3 gap-[14px] w-[492px]">
-                        <button data-modal="Modal-Gallery" data-gallery="@/assets/images/thumbnails/desa-gallery-2.png"
-                            class="relative">
-                            <div
-                                class="thumbnail-selection flex w-full h-[120px] shrink-0 rounded-3xl bg-desa-background overflow-hidden">
-                                <img src="@/assets/images/thumbnails/desa-gallery-2.png"
-                                    class="w-full h-full object-cover" alt="thumbnail">
-                            </div>
-                        </button>
-                        <button data-modal="Modal-Gallery" data-gallery="@/assets/images/thumbnails/desa-gallery-3.png"
-                            class="relative">
-                            <div
-                                class="thumbnail-selection flex w-full h-[120px] shrink-0 rounded-3xl bg-desa-background overflow-hidden">
-                                <img src="@/assets/images/thumbnails/desa-gallery-3.png"
-                                    class="w-full h-full object-cover" alt="thumbnail">
-                            </div>
-                        </button>
-                        <button data-modal="Modal-Gallery" data-gallery="@/assets/images/thumbnails/desa-gallery-4.png"
-                            class="relative">
-                            <div
-                                class="thumbnail-selection flex w-full h-[120px] shrink-0 rounded-3xl bg-desa-background overflow-hidden">
-                                <img src="@/assets/images/thumbnails/desa-gallery-4.png"
-                                    class="w-full h-full object-cover" alt="thumbnail">
-                            </div>
-                            <div
-                                class="absolute inset-0 rounded-3xl overflow-hidden flex flex-col items-center justify-center bg-[#001B1ACC] text-white">
-                                <p class="font-semibold text-xl leading-6">2+</p>
-                                <p class="font-semibold text-sm text-white">Photo</p>
-                            </div>
-                        </button>
+                        <div v-for="(image, index) in profile.profile_images" :key="index" class="relative">
+                            <button class="relative" @click="selectImage(index)"
+                                data-gallery="@/assets/images/thumbnails/desa-gallery-4.png">
+                                <div
+                                    class="thumbnail-selection flex w-full h-[120px] shrink-0 rounded-3xl bg-desa-background overflow-hidden">
+                                    <img :src="image.image" class="w-full h-full object-cover" alt="thumbnail">
+                                </div>
+                                <div v-if="index === 2 && profile.profile_images.length > 3"
+                                    class="absolute inset-0 rounded-3xl overflow-hidden flex flex-col items-center justify-center bg-[#001B1ACC] text-white">
+                                    <p class="font-semibold text-xl leading-6">{{ profile.profile_images.length - 2 }}+
+                                    </p>
+                                    <p class="font-semibold text-sm text-white">Photo</p>
+                                </div>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="flex flex-col gap-3">
                     <p class="font-medium text-sm text-desa-secondary">Tentang Desa</p>
-                    <p class="font-medium leading-8">Desa Angga Countryside terletak di kaki gunung 🏔️ dengan
-                        udara sejuk dan pemandangan sawah yang hijau 🌿. Warganya ramah dan masih menjaga
-                        tradisi gotong-royong. Penghasilan utama desa ini adalah padi 🍚, kopi ☕, dan kerajinan
-                        anyaman bambu 🎋. Desa ini juga memiliki wisata alam seperti air terjun kecil 💧 dan
-                        jalur tracking.</p>
+                    <p class="font-medium leading-8">{{ profile.about }}</p>
                 </div>
                 <div class="flex flex-col gap-3">
                     <p class="font-medium text-sm text-desa-secondary">Peta Desa</p>
@@ -139,7 +134,7 @@ onMounted(fetchProfile);
                                 alt="icon">
                         </div>
                         <div class="flex flex-col gap-1">
-                            <p class="font-semibold text-lg leading-5">243.000</p>
+                            <p class="font-semibold text-lg leading-5">{{ profile.people }}</p>
                             <p class="font-medium text-sm text-desa-secondary">Jumlah Penduduk</p>
                         </div>
                     </div>
@@ -151,7 +146,7 @@ onMounted(fetchProfile);
                                 alt="icon">
                         </div>
                         <div class="flex flex-col gap-1">
-                            <p class="font-semibold text-lg leading-5">25.200m<sup>2</sup></p>
+                            <p class="font-semibold text-lg leading-5">{{ profile.agriculutral_area }}<sup>2</sup></p>
                             <p class="font-medium text-sm text-desa-secondary">Luas Pertanian</p>
                         </div>
                     </div>
@@ -163,7 +158,7 @@ onMounted(fetchProfile);
                                 alt="icon">
                         </div>
                         <div class="flex flex-col gap-1">
-                            <p class="font-semibold text-lg leading-5">9.222.500m<sup>2</sup></p>
+                            <p class="font-semibold text-lg leading-5">{{ profile.total_area }}<sup>2</sup></p>
                             <p class="font-medium text-sm text-desa-secondary">Luas Area</p>
                         </div>
                     </div>
@@ -175,12 +170,38 @@ onMounted(fetchProfile);
                                 alt="icon">
                         </div>
                         <div class="flex flex-col gap-1">
-                            <p class="font-semibold text-lg leading-5">Mon, 24 Feb 2012</p>
+                            <p class="font-semibold text-lg leading-5">{{ formatDateTime(profile.created_at) }}
+                            </p>
                             <p class="font-medium text-sm text-desa-secondary">Desa Dibangun</p>
                         </div>
                     </div>
                 </div>
             </section>
         </div>
+    </template>
+
+    <div v-if="showModalImage" id="Modal-Gallery"
+        class="modal fixed inset-0 flex flex-col h-screen z-40 bg-[#080C1ACC]">
+        <div class="flex flex-col items-center justify-center m-auto">
+            <div id="Main-Image-Container" class="flex aspect-[805/492] w-full max-w-[805px] overflow-hidden mx-auto">
+                <img :src="profile.profile_images[selectedIndex]?.image" class="size-full object-contain object-center"
+                    alt="thumbnail">
+            </div>
+            <button @click="closeModal"
+                class="btn-close-modal flex items-center rounded-full border border-white/10 py-3 px-4 mx-auto mt-[30px]">
+                <img src="@/assets/images/icons/close-circle-white.svg" class="flex size-6 shrink-0" alt="icon">
+                <p class="font-medium leading-5 text-white">Tutup</p>
+            </button>
+        </div>
+        <div class="flex flex-wrap items-center w-full border border-white/10 gap-4 p-4">
+            <button v-for="(image, index) in profile.profile_images" :key="index" @click="selectedIndex = index"
+                :class="['group relative flex w-[140px] h-[120px] shrink-0 rounded-3xl bg-desa-background overflow-hidden', { 'active': selectedIndex === index }]">
+                <img :src="image.image" class="size-full object-cover group-[.active]:blur" alt="thumbnail">
+                <img src="@/assets/images/icons/eye-white-fill.svg"
+                    class="absolute hidden size-9 shrink-0 transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 group-[.active]:flex"
+                    alt="icon">
+            </button>
+        </div>
     </div>
+
 </template>
