@@ -1,5 +1,7 @@
 <script setup>
 import SidebarItem from "./SidebarItem.vue";
+import { computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
 import iconChartInactive from "@/assets/images/icons/chart-square-secondary-green.svg";
 import iconChartActive from "@/assets/images/icons/chart-square-dark-green.svg";
@@ -15,18 +17,22 @@ import iconCalendarInactive from "@/assets/images/icons/calendar-2-secondary-gre
 import iconBuildingActive from "@/assets/images/icons/building-4-secondary-green.svg";
 import iconBuildingInactive from "@/assets/images/icons/building-4-dark-green.svg";
 
-const SidebarItems = [
+const authStore = useAuthStore()
+
+const SidebarItems = computed(() => [
   {
     label: "Dashboard",
     path: "/",
     iconActive: iconChartActive,
     iconInactive: iconChartInactive,
+    permission: 'dashboard-menu'
   },
   {
     label: "Kepala Rumah",
     path: "/head-of-family",
     iconActive: iconCrownActive,
     iconInactive: iconCrownInactive,
+    permission: 'head-of-family-menu'
   },
   {
     label: "Bantuan Sosial",
@@ -37,9 +43,11 @@ const SidebarItems = [
       {
         label: "List Bansos",
         path: "/social-assistance",
+        permission: 'social-assistance-menu'
       }, {
         label: "Pengajuan Bansos",
-        path: "/social-assistance-recipient"
+        path: "/social-assistance-recipient",
+        permission: 'social-assistance-recipient-menu'
       }
     ],
   }, {
@@ -51,9 +59,11 @@ const SidebarItems = [
       {
         label: "Pembangunan",
         path: "/development",
+        permission: 'development-menu'
       }, {
         label: "Events Desa",
-        path: "/event"
+        path: "/event",
+        permission: "event-menu"
       }
     ],
   }, {
@@ -61,8 +71,9 @@ const SidebarItems = [
     path: "/profile",
     iconActive: iconBuildingActive,
     iconInactive: iconBuildingInactive,
+    permission: 'profile-menu'
   }
-];
+]);
 </script>
 
 <template>

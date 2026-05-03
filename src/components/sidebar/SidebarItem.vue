@@ -1,4 +1,5 @@
 <script setup>
+import { can } from '@/helpers/permissionHelper'
 import { computed, ref, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 
@@ -25,7 +26,7 @@ const isChildActive = computed(() => {
     }
     return false
 })
-
+ 
 const isOpen = ref(isChildActive.value)
 
 watch(isChildActive, () => {
@@ -34,9 +35,9 @@ watch(isChildActive, () => {
 
 </script>
 
-<template>
 
-    <li class="group" :class="{ active: isActive }" v-if="!item.children">
+<template>
+    <li class="group" :class="{ active: isActive }" v-if="!item.children && can(item.permission)">
         <RouterLink :to='item.path'
             class=" flex items-center h-14 gap-2 rounded-2xl p-4 group-hover:bg-desa-foreshadow group-[.active]:bg-desa-foreshadow transition-setup">
             <div class="relative flex size-6 shrink-0" v-if="item.iconActive && item.iconInactive">
@@ -54,7 +55,7 @@ watch(isChildActive, () => {
         </RouterLink>
     </li>
 
-    <template v-if="item.children">
+    <template v-if="item.children && item.children.some(child => can(child.permission))">
         <div class="accordion group/accordion flex flex-col gap-1 w-full">
             <button :data-expand="`accordion-${item.label}`"
                 class="group flex w-full shrink-0 items-center h-14 gap-2 rounded-2xl p-4"

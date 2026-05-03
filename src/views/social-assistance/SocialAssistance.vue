@@ -6,6 +6,7 @@ import { storeToRefs } from 'pinia';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { formatToClientTimeZone } from '@/helpers/format';
+import { can } from '@/helpers/permissionHelper';
 
 const route = useRoute()
 const router = useRouter()
@@ -31,6 +32,8 @@ async function handleDelete() {
 onMounted(fetchData);
 </script>
 
+<!-- LANJUTKAN PADA MENIT 9:18 -->
+
 <template>
     <div id="Header" class="flex items-center justify-between">
         <div class="flex flex-col gap-2">
@@ -44,12 +47,13 @@ onMounted(fetchData);
         </div>
         <div class="flex items-center gap-3">
             <button data-modal="Modal-Delete" class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-red"
-                @click="showModalDelete = true">
+                @click="showModalDelete = true" v-if="can('social-assistance-delete')">
                 <p class="font-medium text-white">Hapus Data</p>
                 <img src="@/assets/images/icons/trash-white.svg" class="flex size-6 shrink-0" alt="icon">
             </button>
             <RouterLink :to="{ name: 'edit-social-assistance', params: { id: socialAssistance.id } }"
-                class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-black">
+                class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-black"
+                v-if="can('social-assistance-edit')">
                 <p class="font-medium text-white">Ubah Data</p>
                 <img src="@/assets/images/icons/edit-white.svg" class="flex size-6 shrink-0" alt="icon">
             </RouterLink>
@@ -77,7 +81,7 @@ onMounted(fetchData);
             <img src="@/assets/images/icons/close-circle-white.svg" class="flex size-6 shrink-0" alt="icon">
         </button>
     </div>
-    
+
     <div class="flex gap-[14px]">
         <section id="Informasi-Bantuan-Sosial"
             class="flex flex-col shrink-0 w-[calc(545/1000*100%)] h-fit rounded-3xl p-6 gap-6 bg-white">

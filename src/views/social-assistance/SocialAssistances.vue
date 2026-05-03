@@ -5,6 +5,7 @@ import { ref, onMounted, watch } from 'vue';
 import { debounce } from 'lodash';
 import Pagination from '@/components/ui/Pagination.vue';
 import { useSocialAssistanceStores } from '@/stores/socialAssistance';
+import { can } from '@/helpers/permissionHelper';
 
 const socialAssistanceStore = useSocialAssistanceStores();
 const { socialAssistances, meta, loading, error, success } = storeToRefs(socialAssistanceStore);
@@ -44,7 +45,8 @@ watch(filters, () => {
     <div id="Header" class="flex items-center justify-between">
         <h1 class="font-semibold text-2xl">List Bantuan Sosial</h1>
         <RouterLink :to="{ name: 'create-social-assistance' }"
-            class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-dark-green">
+            class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-dark-green"
+            v-if="can('social-assistance-create')">
             <img src="@/assets/images/icons/add-square-white.svg" class="flex size-6 shrink-0" alt="icon">
             <p class="font-medium text-white">Add New</p>
         </RouterLink>

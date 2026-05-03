@@ -22,7 +22,11 @@ export const useAuthStore = defineStore("auth", {
         const response = await axiosInstance.post("/login", credentials);
         const token = response.data.token;
         Cookies.set("token", token, { expires: 7 });
+
         console.log("Token tersimpan:", Cookies.get("token"));
+
+        await this.checkAuth();
+
         this.success = "Login successful";
         await router.push({ name: "Dashboard" });
       } catch (error) {
@@ -62,11 +66,9 @@ export const useAuthStore = defineStore("auth", {
         this.user = response.data.data;
         return this.user;
       } catch (error) {
-        if (error.response && error.response.status === 401) {
-          Cookies.remove("token");
-          this.user = null;
-          router.push({ name: "Login" });
-        }
+        Cookies.remove("token");
+        this.user = null;
+        router.push({ name: "Login" });  // handle semua error, termasuk 500
       } finally {
         this.loading = false;
       }
