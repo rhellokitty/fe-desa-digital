@@ -17,8 +17,6 @@ import iconCalendarInactive from "@/assets/images/icons/calendar-2-secondary-gre
 import iconBuildingActive from "@/assets/images/icons/building-4-secondary-green.svg";
 import iconBuildingInactive from "@/assets/images/icons/building-4-dark-green.svg";
 
-const authStore = useAuthStore()
-
 const SidebarItems = computed(() => [
   {
     label: "Dashboard",

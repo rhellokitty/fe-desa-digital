@@ -5,6 +5,7 @@ import { debounce } from 'lodash';
 import Pagination from '@/components/ui/Pagination.vue';
 import { useDevelopmentStore } from '@/stores/development';
 import CardList from '@/components/development/CardList.vue';
+import { can } from '@/helpers/permissionHelper';
 
 const developmentStore = useDevelopmentStore();
 const { developments, meta, loading, error, success } = storeToRefs(developmentStore);
@@ -44,7 +45,8 @@ watch(filters, () => {
     <div id="Header" class="flex items-center justify-between">
         <h1 class="font-semibold text-2xl">Pembangunan Desa</h1>
         <RouterLink :to="{ name: 'create-development' }"
-            class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-dark-green">
+            class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-dark-green"
+            v-if="can('development-create')">
             <img src="@/assets/images/icons/add-square-white.svg" class="flex size-6 shrink-0" alt="icon">
             <p class="font-medium text-white">Add New</p>
         </RouterLink>

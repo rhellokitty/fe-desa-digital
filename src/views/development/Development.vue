@@ -6,6 +6,7 @@ import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { formatToClientTimeZone } from '@/helpers/format';
 import ModalDelete from '@/components/ui/ModalDelete.vue';
+import { can } from '@/helpers/permissionHelper';
 
 const route = useRoute()
 const router = useRouter()
@@ -45,12 +46,12 @@ onMounted(fetchData);
         </div>
         <div class="flex items-center gap-3">
             <button data-modal="Modal-Delete" class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-red"
-                @click="showModalDelete = true">
+                v-if="can('development-delete')" @click="showModalDelete = true">
                 <p class="font-medium text-white">Hapus Data</p>
                 <img src="@/assets/images/icons/trash-white.svg" class="flex size-6 shrink-0" alt="icon">
             </button>
             <RouterLink :to="{ name: 'edit-development', params: { id: development.id } }"
-                class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-black">
+                class="flex items-center rounded-2xl py-4 px-6 gap-[10px] bg-desa-black" v-if="can('development-edit')">
                 <p class="font-medium text-white">Ubah Data</p>
                 <img src="@/assets/images/icons/edit-white.svg" class="flex size-6 shrink-0" alt="icon">
             </RouterLink>

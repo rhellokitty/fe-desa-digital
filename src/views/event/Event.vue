@@ -24,6 +24,8 @@ const fetchData = async () => {
 onMounted(fetchData);
 </script>
 
+<!-- LANJUTKAN PADA MENIT 6:41 -->
+
 <template>
     <div id="Header" class="flex items-center justify-between">
         <div class="flex flex-col gap-2">
@@ -84,7 +86,7 @@ onMounted(fetchData);
                 </div>
                 <div class="flex flex-col gap-1 w-full">
                     <p class="font-semibold text-lg leading-[22.5px] text-desa-blue">{{ event.event_participants?.length
-                        }} Warga</p>
+                    }} Warga</p>
                     <span class="font-medium text-desa-secondary">
                         Total Partisipasi
                     </span>

@@ -1,6 +1,12 @@
 <script setup>
 import { formatRupiah, formatToClientTimeZone } from '@/helpers/format';
 
+import { useAuthStore } from '@/stores/auth';
+import { storeToRefs } from 'pinia';
+
+const authStore = useAuthStore();
+const { user } = authStore
+
 defineProps({
     item: {
         type: Object,
@@ -92,7 +98,8 @@ defineProps({
             <div class="flex items-center gap-3 justify-end w-[252px] shrink-0">
                 <RouterLink :to="{ name: 'manage-social-assistance-recipient', params: { id: item.id } }"
                     class="flex items-center shrink-0 gap-[10px] rounded-2xl py-4 px-6 bg-desa-black">
-                    <span class="font-medium text-white">Manage</span>
+                    <span class="font-medium text-white" v-if="user?.role === 'admin'">Manage</span>
+                    <span class="font-medium text-white" v-if="user?.role === 'head-of-family'">view</span>
                 </RouterLink>
             </div>
         </div>
