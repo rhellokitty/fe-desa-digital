@@ -68,7 +68,7 @@ export const useAuthStore = defineStore("auth", {
       } catch (error) {
         Cookies.remove("token");
         this.user = null;
-        router.push({ name: "Login" });  // handle semua error, termasuk 500
+        router.push({ name: "Login" }); 
       } finally {
         this.loading = false;
       }

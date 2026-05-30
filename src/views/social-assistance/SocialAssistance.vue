@@ -32,8 +32,6 @@ async function handleDelete() {
 onMounted(fetchData);
 </script>
 
-<!-- LANJUTKAN PADA MENIT 9:18 -->
-
 <template>
     <div id="Header" class="flex items-center justify-between">
         <div class="flex flex-col gap-2">

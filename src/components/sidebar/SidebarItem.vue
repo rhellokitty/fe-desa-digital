@@ -26,7 +26,7 @@ const isChildActive = computed(() => {
     }
     return false
 })
- 
+
 const isOpen = ref(isChildActive.value)
 
 watch(isChildActive, () => {
